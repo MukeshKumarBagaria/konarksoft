@@ -5,9 +5,10 @@ import { cn } from "@/lib/utils/cn";
 
 /**
  * The Konark wheel — the chariot wheel of the Konark sun temple, reduced to a
- * rim, hub and eight spokes so it stays legible down to favicon sizes.
+ * rim, hub and eight spokes so it stays legible down to favicon sizes. Exported
+ * so the oversized footer wordmark draws the same mark rather than a copy.
  */
-function LogoMark({ className }: { className?: string }) {
+export function BrandMark({ className }: { className?: string }) {
   return (
     <svg
       aria-hidden="true"
@@ -40,7 +41,7 @@ export function BrandLogo({ className }: { className?: string }) {
         className,
       )}
     >
-      <LogoMark className="h-6 w-6 text-brand transition-transform duration-700 ease-out-expo group-hover:rotate-90" />
+      <BrandMark className="h-6 w-6 text-brand transition-transform duration-700 ease-out-expo group-hover:rotate-90" />
       <span className="text-[19px] leading-none tracking-[-0.02em] text-ink">
         <span className="font-extrabold">{primary}</span>
         {secondary ? (

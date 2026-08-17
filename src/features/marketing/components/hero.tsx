@@ -98,7 +98,7 @@ export function Hero({ content }: { content: HeroContent }) {
 
         <p
           data-reveal
-          className="mt-8 max-w-md text-lg text-muted text-pretty sm:text-xl"
+          className="mt-8 max-w-2xl text-lg text-muted text-pretty sm:text-xl"
         >
           {content.subheadline}
         </p>
@@ -115,7 +115,7 @@ export function Hero({ content }: { content: HeroContent }) {
       {/* Wider than the copy above it, and shorter than the cards it holds:
           the deck overflows this box and the section clips it, so the cards
           bleed into the boundary below. */}
-      <div className="relative mx-auto mt-14 w-full max-w-6xl px-5 pb-20 md:mt-16 md:h-[clamp(13rem,17.5vw,16rem)] md:pb-0">
+      <div className="relative mx-auto mt-14 w-full max-w-6xl px-5 pb-20 md:mt-16 md:h-[clamp(13.5rem,18.25vw,16.75rem)] md:pb-0">
         <HeroCards cards={content.cards} />
       </div>
     </section>

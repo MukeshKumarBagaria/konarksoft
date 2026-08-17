@@ -3,11 +3,13 @@
 import Lenis from "lenis";
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
   useRef,
   type ReactNode,
+  type RefObject,
 } from "react";
 
 type SmoothScrollApi = {
@@ -68,4 +70,84 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
 /** Returns `null` when smooth scrolling is disabled (reduced motion, no provider). */
 export function useSmoothScroll(): SmoothScrollApi | null {
   return useContext(SmoothScrollContext);
+}
+
+/**
+ * Gives a horizontal scroll container its own Lenis, and returns a smooth
+ * relative scroll for driving it from controls. Lives here so Lenis stays
+ * imported in exactly one module.
+ *
+ * The container must be scrollable on its own (`overflow-x`) and hold a single
+ * child, so the rail keeps working as a plain scroller before this mounts and
+ * wherever JS never runs.
+ *
+ * Only horizontal intent is captured, so a vertical wheel over the rail still
+ * scrolls the page. Reduced motion needs no branch here: Lenis honours the
+ * preference itself by tracking the input 1:1 and jumping programmatic scrolls
+ * straight to their target.
+ */
+export function useHorizontalSmoothScroll(
+  ref: RefObject<HTMLElement | null>,
+): (delta: number) => void {
+  const lenisRef = useRef<Lenis | null>(null);
+  /** Where the in-flight scroll is headed, so clicks can queue against it. */
+  const pendingRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const wrapper = ref.current;
+    const content = wrapper?.firstElementChild;
+    if (!wrapper || !content) return;
+
+    const lenis = new Lenis({
+      wrapper,
+      // Only watched for resizes — an element wrapper measures its own scroll
+      // extent — so this is the track, which is what changes when cards do.
+      content,
+      orientation: "horizontal",
+      gestureOrientation: "horizontal",
+      duration: 1.05,
+      easing: (t: number) => 1 - Math.pow(1 - t, 3),
+      // Touch devices already have excellent native inertia.
+      syncTouch: false,
+      // Nested instance, so it drives its own frame loop rather than borrowing
+      // the page-level one above.
+      autoRaf: true,
+    });
+    lenisRef.current = lenis;
+
+    return () => {
+      lenis.destroy();
+      lenisRef.current = null;
+    };
+  }, [ref]);
+
+  return useCallback(
+    (delta: number) => {
+      const wrapper = ref.current;
+      if (!wrapper) return;
+
+      const lenis = lenisRef.current;
+      if (!lenis) {
+        wrapper.scrollBy({ left: delta, behavior: "smooth" });
+        return;
+      }
+
+      // During a programmatic scroll Lenis reports the live position, not the
+      // destination — `targetScroll` is rewritten every frame — so a second
+      // click would measure a moving value and lose a step. Chain against the
+      // pending destination while one is in flight, and fall back to the real
+      // position once it lands or the user takes over with a gesture.
+      const inFlight = lenis.isScrolling === "smooth" && pendingRef.current !== null;
+      const base = inFlight ? (pendingRef.current as number) : wrapper.scrollLeft;
+      const limit = wrapper.scrollWidth - wrapper.clientWidth;
+
+      // Clamped here as well as by Lenis, so overshooting the end cannot bank
+      // up a phantom target that later takes extra clicks to unwind.
+      const target = Math.min(Math.max(base + delta, 0), limit);
+
+      pendingRef.current = target;
+      lenis.scrollTo(target);
+    },
+    [ref],
+  );
 }

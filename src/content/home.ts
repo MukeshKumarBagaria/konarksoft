@@ -2,9 +2,10 @@ import type { HeroContent } from "@/types/content";
 
 export const heroContent: HeroContent = {
   badge: "Now Booking",
-  headline: "Design, Build & Grow",
-  accent: { lead: "Without Any", highlight: "Limits" },
-  subheadline: "Websites, apps and campaigns that move the numbers",
+  headline: "Digital Design &",
+  accent: { lead: "Development", highlight: "Agency" },
+  subheadline:
+    "We design and build digital products, brands and websites for companies ready to move beyond the ordinary.",
   cta: { label: "View Pricing", href: "/pricing" },
   cards: [
     { index: "01", icon: "🌐", title: "Websites", kicker: "Development" },

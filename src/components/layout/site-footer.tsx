@@ -1,50 +1,55 @@
-import Link from "next/link";
-
-import { BrandLogo } from "@/components/navigation/brand-logo";
-import { sitePages } from "@/config/navigation";
+import { BrandReveal } from "@/components/layout/brand-reveal";
+import { ArrowUpRightIcon } from "@/components/ui/icons";
 import { siteConfig } from "@/config/site";
+import { ctaContent } from "@/content/cta";
+import { SiteCta } from "@/features/marketing/components/site-cta";
 
+/**
+ * Closing block for every marketing page: the booking CTA, the wordmark that
+ * rises from behind it, then the legal bar. The CTA and the reveal window sit in
+ * one column with nothing between them — that shared edge is what the parallax
+ * clips against, so keep them adjacent.
+ *
+ * `w-full` on the wrapper is load-bearing: this sits directly in the body's
+ * column flex, where the auto inline margins stop the item stretching. Without
+ * it the block shrinks to its content and never reaches `max-w-*`.
+ */
 export function SiteFooter() {
   return (
-    <footer className="border-t border-hairline bg-white">
-      <div className="mx-auto flex max-w-6xl flex-col gap-10 px-5 py-14 sm:flex-row sm:items-start sm:justify-between">
-        <div className="max-w-xs">
-          <BrandLogo />
-          <p className="mt-4 text-[15px] leading-relaxed text-muted text-pretty">
-            {siteConfig.description}
+    <div className="mx-auto w-full max-w-7xl px-5 pt-10 pb-6 sm:pt-16">
+      <SiteCta content={ctaContent} />
+
+      <footer>
+        <BrandReveal />
+
+        {/* Rides the bottom of the viewport while the wordmark reveals behind
+            it. The stick offset matches the wrapper's bottom padding, so the
+            bar's resting place at full scroll is exactly where it was pinned
+            and it settles without a jump. */}
+        <div className="sticky bottom-6 z-20 flex flex-col gap-5 rounded-[1.5rem] bg-ink-strong px-6 py-5 text-[13px] text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+          <p>
+            © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
           </p>
+
+          <nav aria-label="Social">
+            <ul className="flex flex-wrap items-center gap-x-7 gap-y-2">
+              {siteConfig.social.map((profile) => (
+                <li key={profile.label}>
+                  <a
+                    href={profile.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 text-white/75 transition-colors duration-200 hover:text-white"
+                  >
+                    {profile.label}
+                    <ArrowUpRightIcon className="h-3.5 w-3.5" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
-
-        <nav aria-label="Footer" className="sm:text-right">
-          <h2 className="text-xs font-semibold tracking-[0.14em] text-subtle uppercase">
-            Pages
-          </h2>
-          <ul className="mt-4 flex flex-col gap-2.5">
-            {sitePages.map((page) => (
-              <li key={page.href}>
-                <Link
-                  href={page.href}
-                  className="text-[15px] font-medium text-ink/70 transition-colors duration-200 hover:text-ink"
-                >
-                  {page.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-      </div>
-
-      <div className="mx-auto flex max-w-6xl flex-col gap-2 border-t border-hairline px-5 py-6 text-[13px] text-subtle sm:flex-row sm:items-center sm:justify-between">
-        <p>
-          © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
-        </p>
-        <a
-          href={`mailto:${siteConfig.contactEmail}`}
-          className="font-medium text-ink/70 transition-colors duration-200 hover:text-ink"
-        >
-          {siteConfig.contactEmail}
-        </a>
-      </div>
-    </footer>
+      </footer>
+    </div>
   );
 }

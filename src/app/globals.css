@@ -19,6 +19,13 @@
   --color-ink: #1c1c22;
   --color-ink-strong: #0d0d11;
 
+  /* Cool counterpart to the brand orange, used where the two are paired. */
+  --color-iris: #7a5fd3;
+  /* Saturated end of the iris ramp, for type that has to carry a block alone. */
+  --color-iris-strong: #6d3bdc;
+  /* Warm end of the iris gradient on the CTA banner's accent words. */
+  --color-rose: #ec4a8e;
+
   --color-canvas: #f4f3f8;
   --color-canvas-warm: #fdf3ec;
   --color-canvas-cool: #ece9fb;
@@ -28,7 +35,6 @@
 
   --shadow-pill: 0 10px 30px -14px rgba(18, 18, 32, 0.35);
   --shadow-float: 0 24px 60px -28px rgba(18, 18, 32, 0.45);
-  --shadow-card: 0 18px 50px -30px rgba(18, 18, 32, 0.4);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-out-soft: cubic-bezier(0.33, 1, 0.68, 1);
@@ -140,9 +146,10 @@ html.lenis body {
 
 /* ---------------------------------------------------------------------------
    Hero card deck
-   A tilted stack on phones, a symmetric fan from `md` up. Rotation and lift
-   arrive as custom properties from the component so the two layouts can use
-   different geometry without inline styles winning over the breakpoint.
+   A tilted stack on phones, a symmetric fan from `md` up. Rotation arrives as a
+   custom property from the component so the two layouts can use different
+   geometry without inline styles winning over the breakpoint. Lift stays at 0
+   for the resting fan — hover borrows it to raise a single card.
 --------------------------------------------------------------------------- */
 /* The list item owns the entrance animation (GSAP writes `transform` there and
    blanks out translate/rotate/scale inline), the inner `.hero-card` owns the
@@ -163,20 +170,73 @@ html.lenis body {
   --stack-rotate: -2.4deg;
 }
 
+/* The card face is frosted glass: a tint doing very little on its own, carried
+   by a heavy blur plus a saturation boost so the aurora and grid behind it bleed
+   through in colour. Three inset layers do the lighting — a rim around the whole
+   edge, a brighter sheen along the top where a real pane would catch the light,
+   and a faint dark line along the bottom to seat it. Elevation is a variable so
+   hover can deepen it without restating the stack; keeping the shadow count
+   equal in both states is what lets `box-shadow` transition smoothly. */
 .hero-card {
+  --card-tint: rgba(255, 255, 255, 0.5);
+  --card-blur: 26px;
+  --card-saturate: 170%;
+  --card-rim: rgba(255, 255, 255, 0.7);
+  --card-sheen: rgba(255, 255, 255, 0.95);
+  --card-seat: rgba(18, 18, 32, 0.05);
+  /* Outside the rim, so the silhouette still reads where a white edge would
+     dissolve into the light background. */
+  --card-outline: rgba(18, 18, 32, 0.055);
+  --card-elevation:
+    0 2px 8px -5px rgba(18, 18, 32, 0.2), 0 26px 50px -30px rgba(18, 18, 32, 0.45);
+
+  background-color: var(--card-tint);
+  /* Specular sweep across the top-left corner, layered over the tint. Sits in
+     `background-image` rather than a pseudo-element so it can never wash over
+     the card's own text. */
+  background-image: linear-gradient(
+    152deg,
+    rgba(255, 255, 255, 0.58) 0%,
+    rgba(255, 255, 255, 0.14) 44%,
+    rgba(255, 255, 255, 0) 70%
+  );
+  -webkit-backdrop-filter: blur(var(--card-blur)) saturate(var(--card-saturate));
+  backdrop-filter: blur(var(--card-blur)) saturate(var(--card-saturate));
+  box-shadow:
+    inset 0 0 0 1px var(--card-rim),
+    inset 0 1px 0 var(--card-sheen),
+    inset 0 -1px 0 var(--card-seat),
+    0 0 0 1px var(--card-outline),
+    var(--card-elevation);
+
   rotate: var(--card-rotate);
   translate: 0 var(--card-lift);
   transition:
     translate 550ms var(--ease-out-expo),
     rotate 550ms var(--ease-out-expo),
     scale 550ms var(--ease-out-expo),
+    background-color 550ms var(--ease-out-expo),
     box-shadow 550ms var(--ease-out-expo);
+}
+
+/* Without a backdrop to blur, the tint alone would read as washed-out white, so
+   take the glass nearly opaque and keep the text legible. */
+@supports not (backdrop-filter: blur(1px)) {
+  .hero-card {
+    --card-tint: rgba(255, 255, 255, 0.92);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .hero-card {
+    --card-tint: rgba(255, 255, 255, 0.94);
+    --card-blur: 0px;
+  }
 }
 
 @media (width >= 48rem) {
   .hero-deck > li {
     --card-rotate: var(--fan-rotate, 0deg);
-    --card-lift: var(--fan-lift, 0px);
   }
 }
 
@@ -188,11 +248,243 @@ html.lenis body {
   }
 
   .hero-deck > li:hover .hero-card {
+    /* The pane thickens and its rim catches more light as it comes forward. */
+    --card-tint: rgba(255, 255, 255, 0.68);
+    --card-rim: rgba(255, 255, 255, 0.85);
+    --card-outline: rgba(18, 18, 32, 0.045);
+    --card-elevation:
+      0 4px 14px -8px rgba(18, 18, 32, 0.25),
+      0 40px 70px -34px rgba(18, 18, 32, 0.5);
+
     rotate: calc(var(--card-rotate) * 0.35);
     translate: 0 calc(var(--card-lift) - 1.25rem);
     scale: 1.025;
-    box-shadow: var(--shadow-float);
   }
+}
+
+/* ---------------------------------------------------------------------------
+   CTA banner
+   Warm glow bleeding in from the left edge, cool from the right, both anchored
+   outside the card so they read as light entering it rather than blobs sitting
+   in the corners.
+--------------------------------------------------------------------------- */
+.cta-banner {
+  background-color: #fff;
+  background-image:
+    /* Under the star: warm light spilling in from the left edge. */
+    radial-gradient(
+      50% 120% at 0% 40%,
+      rgba(244, 128, 62, 0.62) 0%,
+      rgba(250, 178, 122, 0.3) 32%,
+      rgba(255, 255, 255, 0) 66%
+    ),
+    /* Under the plane: the cool half, strongest where it meets the corner. */
+    radial-gradient(
+      46% 108% at 101% 82%,
+      rgba(139, 74, 235, 0.55) 0%,
+      rgba(160, 120, 240, 0.24) 34%,
+      rgba(255, 255, 255, 0) 68%
+    ),
+    radial-gradient(
+      40% 92% at 97% 2%,
+      rgba(200, 150, 245, 0.38) 0%,
+      rgba(255, 255, 255, 0) 62%
+    );
+}
+
+/* A dash travelling along an otherwise faint line. Offsetting by exactly one
+   dash + gap lands the pattern on itself, so the loop has no seam no matter how
+   long the path is — the segment leaves one end as its twin enters the other. */
+@keyframes filament-travel {
+  to {
+    stroke-dashoffset: calc(-1 * (var(--filament-dash) + var(--filament-gap)));
+  }
+}
+
+.filament {
+  --filament-dash: 220px;
+  --filament-gap: 1180px;
+
+  stroke-dasharray: var(--filament-dash) var(--filament-gap);
+  animation: filament-travel var(--filament-duration, 10s) linear infinite;
+  animation-delay: var(--filament-delay, 0s);
+}
+
+/* The two decorative objects, kept slow enough to register as drift rather than
+   as motion competing with the copy. Both use the independent transform
+   properties so a `rotate` and a `translate`/`scale` never overwrite each
+   other, and neither disturbs the layout. */
+@keyframes decor-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes decor-drift {
+  to {
+    translate: -3.5% -5%;
+    scale: 1.04;
+  }
+}
+
+.decor-spin {
+  animation: decor-spin 34s linear infinite;
+}
+
+.decor-drift {
+  /* `alternate` so it eases back out the way it came instead of snapping home. */
+  animation: decor-drift 5.5s var(--ease-out-soft) infinite alternate;
+}
+
+/* ---------------------------------------------------------------------------
+   Recent work rail
+   The arrow buttons carry the affordance, so the native bar is hidden — wheel,
+   drag, and keyboard scrolling of the rail all still work.
+--------------------------------------------------------------------------- */
+.work-rail {
+  scrollbar-width: none;
+  /* Stops a horizontal overscroll from triggering the browser's back gesture. */
+  overscroll-behavior-x: contain;
+}
+
+.work-rail::-webkit-scrollbar {
+  display: none;
+}
+
+/* Both surfaces read the tone the component sets on the card. */
+.work-card {
+  background-image: linear-gradient(118deg, #fff 32%, var(--tone-wash) 100%);
+}
+
+.work-media {
+  background-image:
+    radial-gradient(
+      118% 88% at 16% 6%,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0) 58%
+    ),
+    linear-gradient(148deg, var(--tone-from) 0%, var(--tone-to) 100%);
+}
+
+/* ---------------------------------------------------------------------------
+   Pricing
+   The block sits on a warm field that deepens downward. Its two plans are
+   painted from opposite ends of the palette — an ember card burning amber →
+   magenta → near-black, and a frost card that stays in the cool lavender end —
+   so the recommended plan wins on contrast rather than on a louder badge.
+--------------------------------------------------------------------------- */
+.pricing-field {
+  background-image: linear-gradient(
+    180deg,
+    #f4f3f6 0%,
+    #fdf1e4 22%,
+    #fbdcbd 56%,
+    #f9c58e 82%,
+    #f7b877 100%
+  );
+}
+
+/* The grid rides a pseudo-element rather than a further background layer
+   because it needs a mask of its own: masking the element would take the
+   gradient underneath it with it, and the grid has to fade out before it
+   reaches the pale top edge, where it would print as dirt. */
+.pricing-field::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(to right, rgba(150, 74, 18, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(150, 74, 18, 0.07) 1px, transparent 1px);
+  background-size: 38px 38px;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 30%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 30%);
+  pointer-events: none;
+}
+
+.plan-ember {
+  background-color: #08040a;
+  background-image:
+    radial-gradient(
+      88% 62% at 4% -4%,
+      #f9a03f 0%,
+      rgba(238, 104, 46, 0.7) 30%,
+      rgba(8, 4, 10, 0) 66%
+    ),
+    radial-gradient(
+      84% 72% at 106% 26%,
+      #d02da2 0%,
+      rgba(146, 33, 132, 0.55) 40%,
+      rgba(8, 4, 10, 0) 74%
+    ),
+    linear-gradient(172deg, #8c2170 0%, #340c28 44%, #0a040c 76%, #050308 100%);
+}
+
+.plan-ember-head {
+  background-image: linear-gradient(
+    100deg,
+    #f09a45 0%,
+    #e8672f 26%,
+    #cf3487 66%,
+    #b02a9b 100%
+  );
+}
+
+/* Same grid as the field, inverted — it only shows once this panel has fallen
+   dark enough toward the bottom to carry a light line. */
+.plan-ember-body {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(168deg, #a32d88 0%, #5d1550 24%, #1c0716 60%, #07030a 100%);
+  background-size:
+    34px 34px,
+    34px 34px,
+    auto;
+}
+
+.plan-frost {
+  background-image: linear-gradient(
+    162deg,
+    #ffffff 0%,
+    #f8f5fe 46%,
+    #ece5fb 100%
+  );
+}
+
+.plan-frost-head {
+  background-image: linear-gradient(100deg, #ffffff 0%, #fcfaff 100%);
+}
+
+.plan-frost-body {
+  background-image: linear-gradient(164deg, #fdfcff 0%, #f4effc 100%);
+}
+
+/* Indigo at the copy end, crimson under the button, so the strip warms toward
+   the action it is asking for. */
+.plan-strip {
+  background-color: #120a20;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    radial-gradient(
+      58% 130% at 74% 70%,
+      rgba(232, 92, 34, 0.55) 0%,
+      rgba(18, 10, 32, 0) 68%
+    ),
+    radial-gradient(
+      70% 150% at 104% 46%,
+      #c2172f 0%,
+      rgba(150, 20, 44, 0.6) 34%,
+      rgba(18, 10, 32, 0) 76%
+    ),
+    linear-gradient(96deg, #101235 0%, #22103a 30%, #5d1330 62%, #97131f 100%);
+  background-size:
+    36px 36px,
+    36px 36px,
+    auto,
+    auto,
+    auto;
 }
 
 /* ---------------------------------------------------------------------------
@@ -219,6 +511,86 @@ html.lenis body {
       rgba(237, 179, 106, 0) 78%
     ),
     linear-gradient(180deg, #f6f4fc 0%, #f0edf8 100%);
+}
+
+/* The closing CTA card. The hot mass is a horizontal chevron: two flattened
+   bands rotated about a shared apex just right of centre, so it converges to a
+   point instead of sweeping corner to corner. The bands have to live on
+   pseudo-elements because a CSS gradient cannot be rotated on its own — which
+   also means they paint in the positioned layer, so the card's own children
+   need `relative` to stay above them. */
+.canvas-ember {
+  position: relative;
+  background-color: #150610;
+  background-image:
+    /* Glow pooling where the two arms converge. */
+    radial-gradient(
+      28% 56% at 60% 50%,
+      rgba(255, 138, 74, 0.5) 0%,
+      rgba(21, 6, 16, 0) 76%
+    ),
+    /* Ember settling along the bottom edge, carried a little right of centre so
+       the card does not sit heavier on one side. */
+    radial-gradient(
+      72% 40% at 52% 112%,
+      rgba(255, 152, 84, 0.6) 0%,
+      rgba(232, 80, 40, 0.28) 36%,
+      rgba(21, 6, 16, 0) 72%
+    ),
+    /* Plum cast in the top-left corner. */
+    radial-gradient(
+      58% 72% at 6% -8%,
+      rgba(86, 28, 68, 0.95) 0%,
+      rgba(21, 6, 16, 0) 62%
+    ),
+    linear-gradient(118deg, #2e1020 0%, #170710 46%, #2a0d16 100%);
+}
+
+/* One arm of the chevron. Both are anchored by their right edge at the apex
+   (62% across) and pivot around it, so the rotation opens the V leftwards and
+   the gap between them is what reads as the notch. The band runs wider than the
+   distance to the left edge so it bleeds off rather than ending in the card.
+   The viewport cap on the height is what keeps each arm a flat band: the card
+   turns portrait once the booking card stacks, and a plain percentage there
+   would make the box taller than it is wide and blur the V into a blob. */
+.canvas-ember::before,
+.canvas-ember::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  right: 38%;
+  width: 78%;
+  height: min(62%, 22vw);
+  transform-origin: 100% 50%;
+  background-image: radial-gradient(
+    78% 58% at 28% 50%,
+    rgba(255, 164, 96, 0.98) 0%,
+    rgba(246, 96, 46, 0.86) 24%,
+    rgba(198, 54, 34, 0.52) 46%,
+    rgba(104, 24, 28, 0.2) 68%,
+    rgba(21, 6, 16, 0) 88%
+  );
+  pointer-events: none;
+}
+
+.canvas-ember::before {
+  transform: translateY(-50%) rotate(-10.5deg);
+}
+
+.canvas-ember::after {
+  transform: translateY(-50%) rotate(10.5deg);
+}
+
+/* Short arms need a steeper pivot to open the same notch. */
+@media (width < 40rem) {
+  .canvas-ember::before {
+    transform: translateY(-50%) rotate(-16deg);
+  }
+
+  .canvas-ember::after {
+    transform: translateY(-50%) rotate(16deg);
+  }
 }
 
 .canvas-grid {
