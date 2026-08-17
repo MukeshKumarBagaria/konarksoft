@@ -18,6 +18,34 @@ export const sitePages: readonly NavLink[] = [
   { label: "Contact", href: "/contact", description: "Start a conversation" },
 ];
 
+/**
+ * Ad landing pages. Deliberately absent from `mainNav`, the "All Pages" menu
+ * and the footer — they answer to paid traffic and carry no site navigation of
+ * their own — but listed here so `sitemap.xml` still finds them.
+ */
+export const landingPages: readonly NavLink[] = [
+  {
+    label: "Website Development",
+    href: "/website-development",
+    description: "Fixed-price websites from ₹4,999",
+  },
+  {
+    label: "Mobile App Development",
+    href: "/mobile-app-development",
+    description: "Flutter and React Native apps from ₹49,999",
+  },
+  {
+    label: "Meta & Google Ads",
+    href: "/meta-google-ads",
+    description: "Campaign management from ₹14,999 a month",
+  },
+  {
+    label: "AI Content Creation",
+    href: "/ai-content-creation",
+    description: "Brand-voice content from ₹9,999 a month",
+  },
+];
+
 export const mainNav: readonly NavItem[] = [
   { kind: "menu", label: "All Pages", items: sitePages },
   { kind: "link", label: "About", href: "/about" },

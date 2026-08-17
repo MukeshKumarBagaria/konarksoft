@@ -14,6 +14,13 @@ export const siteConfig = {
   /** Placeholder — swap in the studio's real line before launch. */
   contactPhone: "+91 00000 00000",
   /**
+   * The line every WhatsApp call-to-action opens. Country code first, digits
+   * only — the format `wa.me` expects. Kept in the environment because the ad
+   * landing pages are useless pointed at the placeholder, and a wrong number
+   * there costs money per click.
+   */
+  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "919000000000",
+  /**
    * Shown in the footer bar. Placeholder handles: point each one at the real
    * profile before launch, or drop the entry to hide the link.
    */

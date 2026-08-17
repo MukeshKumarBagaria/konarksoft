@@ -1,23 +1,27 @@
+import type { ReactNode } from "react";
+
 import { BrandReveal } from "@/components/layout/brand-reveal";
 import { ArrowUpRightIcon } from "@/components/ui/icons";
 import { siteConfig } from "@/config/site";
-import { ctaContent } from "@/content/cta";
-import { SiteCta } from "@/features/marketing/components/site-cta";
 
 /**
- * Closing block for every marketing page: the booking CTA, the wordmark that
- * rises from behind it, then the legal bar. The CTA and the reveal window sit in
- * one column with nothing between them — that shared edge is what the parallax
- * clips against, so keep them adjacent.
+ * Closing block for every marketing page: the route's CTA card, the wordmark
+ * that rises from behind it, then the legal bar. The card and the reveal window
+ * sit in one column with nothing between them — that shared edge is what the
+ * parallax clips against, so keep them adjacent.
+ *
+ * `cta` arrives from the layout's `closing` slot: the booking card on most
+ * routes, the enquiry form on `/contact`. It is a prop rather than a fixed
+ * import so the footer never has to know which route it is closing.
  *
  * `w-full` on the wrapper is load-bearing: this sits directly in the body's
  * column flex, where the auto inline margins stop the item stretching. Without
  * it the block shrinks to its content and never reaches `max-w-*`.
  */
-export function SiteFooter() {
+export function SiteFooter({ cta }: { cta: ReactNode }) {
   return (
     <div className="mx-auto w-full max-w-7xl px-5 pt-10 sm:pt-16">
-      <SiteCta content={ctaContent} />
+      {cta}
 
       <footer>
         <BrandReveal />

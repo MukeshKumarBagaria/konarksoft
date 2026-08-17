@@ -6,29 +6,9 @@ import { useEffect, useRef } from "react";
 
 import { buttonStyles } from "@/components/ui/button";
 import { CoinIcon } from "@/components/ui/icons";
+import { UnderlineStroke } from "@/components/ui/underline-stroke";
 import { HeroCards } from "@/features/marketing/components/hero-cards";
 import type { HeroContent } from "@/types/content";
-
-/** Hand-drawn emphasis stroke under the accent word. */
-function UnderlineStroke() {
-  return (
-    <svg
-      aria-hidden="true"
-      focusable="false"
-      viewBox="0 0 300 14"
-      fill="none"
-      preserveAspectRatio="none"
-      className="absolute -bottom-[0.12em] left-0 h-[0.16em] w-full text-brand"
-    >
-      <path
-        d="M2 10.5C48 4.8 104 2 150 2c46 0 102 2.8 148 8.5"
-        stroke="currentColor"
-        strokeWidth="3.2"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
 
 export function Hero({ content }: { content: HeroContent }) {
   const rootRef = useRef<HTMLElement>(null);

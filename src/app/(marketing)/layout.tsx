@@ -1,16 +1,19 @@
-import type { ReactNode } from "react";
-
+import { ClosingCard } from "@/components/layout/closing-card";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/navigation/site-header";
+import { contactContent } from "@/content/contact";
+import { ctaContent } from "@/content/cta";
+import { ContactCta } from "@/features/marketing/components/contact-cta";
+import { SiteCta } from "@/features/marketing/components/site-cta";
 
 /**
  * Shell for every public marketing page: floating header, main landmark, footer.
+ *
+ * The card the page closes on is chosen here rather than by the pages, because
+ * it has to sit inside the footer — hard against the wordmark reveal, which
+ * clips on its bottom edge.
  */
-export default function MarketingLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function MarketingLayout({ children }: LayoutProps<"/">) {
   return (
     <>
       <a
@@ -26,7 +29,14 @@ export default function MarketingLayout({
         {children}
       </main>
 
-      <SiteFooter />
+      <SiteFooter
+        cta={
+          <ClosingCard
+            contact={<ContactCta content={contactContent.card} />}
+            booking={<SiteCta content={ctaContent} />}
+          />
+        }
+      />
     </>
   );
 }
