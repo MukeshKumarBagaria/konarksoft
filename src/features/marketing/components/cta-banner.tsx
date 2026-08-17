@@ -60,7 +60,7 @@ export function CtaBanner({ content }: { content: CtaBannerContent }) {
   return (
     <section
       aria-labelledby="cta-banner-heading"
-      className="mx-auto max-w-7xl px-5 pb-24 sm:pb-28"
+      className="mx-auto max-w-7xl px-5 py-20 sm:py-24"
     >
       <div className="cta-banner relative isolate overflow-hidden rounded-[2rem] ring-1 ring-hairline">
         {/* Stretched, not cropped: the curves are abstract enough to take the

@@ -20,7 +20,13 @@ export function SiteCta({ content }: { content: CtaContent }) {
   return (
     <section aria-labelledby="cta-heading" className="relative z-10">
       <div className="canvas-ember relative overflow-hidden rounded-[2rem] px-7 py-11 sm:px-10 sm:py-14 lg:flex lg:items-stretch lg:justify-between lg:gap-14 lg:px-14">
-        <div className="relative lg:flex lg:flex-col lg:justify-center lg:py-2">
+        {/* Between the chevron arms and the copy — see `.canvas-ember-scrim`. */}
+        <div
+          aria-hidden="true"
+          className="canvas-ember-scrim pointer-events-none absolute inset-0 z-1"
+        />
+
+        <div className="relative z-10 lg:flex lg:flex-col lg:justify-center lg:py-2">
           <h2
             id="cta-heading"
             className="text-[clamp(2rem,4.6vw,3.4rem)] leading-[1.06] font-bold tracking-[-0.03em] text-white text-balance"
@@ -51,7 +57,7 @@ export function SiteCta({ content }: { content: CtaContent }) {
           </div>
         </div>
 
-        <div className="relative mt-10 w-full rounded-[1.5rem] bg-white p-7 shadow-float lg:mt-0 lg:w-[21rem] lg:shrink-0">
+        <div className="relative z-10 mt-10 w-full rounded-[1.5rem] bg-white p-7 shadow-float lg:mt-0 lg:w-[21rem] lg:shrink-0">
           <span
             aria-hidden="true"
             className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-soft ring-1 ring-hairline"

@@ -18,6 +18,13 @@ type SmoothScrollApi = {
   resume: () => void;
 };
 
+type HorizontalScrollApi = {
+  /** Glides the container by `delta` px. Repeated calls queue up. */
+  scrollBy: (delta: number) => void;
+  /** Moves the container with no animation — for repositioning, not travel. */
+  jumpTo: (position: number) => void;
+};
+
 const SmoothScrollContext = createContext<SmoothScrollApi | null>(null);
 
 /**
@@ -88,7 +95,7 @@ export function useSmoothScroll(): SmoothScrollApi | null {
  */
 export function useHorizontalSmoothScroll(
   ref: RefObject<HTMLElement | null>,
-): (delta: number) => void {
+): HorizontalScrollApi {
   const lenisRef = useRef<Lenis | null>(null);
   /** Where the in-flight scroll is headed, so clicks can queue against it. */
   const pendingRef = useRef<number | null>(null);
@@ -121,7 +128,7 @@ export function useHorizontalSmoothScroll(
     };
   }, [ref]);
 
-  return useCallback(
+  const scrollBy = useCallback(
     (delta: number) => {
       const wrapper = ref.current;
       if (!wrapper) return;
@@ -150,4 +157,23 @@ export function useHorizontalSmoothScroll(
     },
     [ref],
   );
+
+  const jumpTo = useCallback(
+    (position: number) => {
+      const wrapper = ref.current;
+      if (!wrapper) return;
+
+      // Any queued destination refers to the position we are leaving.
+      pendingRef.current = null;
+
+      const lenis = lenisRef.current;
+      // Must go through Lenis rather than assigning `scrollLeft`: Lenis rewrites
+      // the container from its own value every frame and would undo it.
+      if (lenis) lenis.scrollTo(position, { immediate: true, force: true });
+      else wrapper.scrollLeft = position;
+    },
+    [ref],
+  );
+
+  return useMemo(() => ({ scrollBy, jumpTo }), [scrollBy, jumpTo]);
 }

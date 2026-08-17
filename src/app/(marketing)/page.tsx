@@ -11,9 +11,9 @@ export default function HomePage() {
   return (
     <>
       <Hero content={heroContent} />
+      <CtaBanner content={ctaBannerContent} />
       <RecentWork content={recentWorkContent} />
       <PricingPlans content={pricingPlansContent} />
-      <CtaBanner content={ctaBannerContent} />
     </>
   );
 }

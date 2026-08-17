@@ -563,8 +563,11 @@ html.lenis body {
   width: 78%;
   height: min(62%, 22vw);
   transform-origin: 100% 50%;
+  /* The hot point sits well along the arm rather than out at its tail: the tail
+     falls across the copy, and at full brightness there white text on it was
+     measuring 2:1. */
   background-image: radial-gradient(
-    78% 58% at 28% 50%,
+    72% 58% at 46% 50%,
     rgba(255, 164, 96, 0.98) 0%,
     rgba(246, 96, 46, 0.86) 24%,
     rgba(198, 54, 34, 0.52) 46%,
@@ -572,6 +575,23 @@ html.lenis body {
     rgba(21, 6, 16, 0) 88%
   );
   pointer-events: none;
+}
+
+/* Scrim over the arms, not under them: they paint in the positioned layer, so a
+   background layer cannot reach them. Sits between the arms (z 0) and the copy
+   (z 10), and clears the right half so the chevron still reads.
+
+   Measured against the lightest pixel behind each run of white text: bare, the
+   headline was 2.0:1. These stops put the worst case at 5.5:1 — margin over the
+   4.5:1 minimum without dimming the arms any more than that costs. */
+.canvas-ember-scrim {
+  background-image: linear-gradient(
+    96deg,
+    rgba(16, 5, 12, 0.56) 0%,
+    rgba(16, 5, 12, 0.44) 24%,
+    rgba(16, 5, 12, 0.2) 46%,
+    rgba(16, 5, 12, 0) 64%
+  );
 }
 
 .canvas-ember::before {
