@@ -1,26 +1,277 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ---------------------------------------------------------------------------
+   Design tokens
+   Every colour, font, shadow and easing used by the UI is declared here so
+   components never hardcode one-off values.
+--------------------------------------------------------------------------- */
+@theme {
+  --color-background: #ffffff;
+  --color-foreground: #16161c;
+  --color-muted: #6a6a78;
+  --color-subtle: #8c8c9a;
+  --color-hairline: rgba(18, 18, 32, 0.08);
+
+  --color-brand: #f24a2e;
+  --color-brand-strong: #d63a20;
+  --color-brand-soft: #ffece7;
+
+  --color-ink: #1c1c22;
+  --color-ink-strong: #0d0d11;
+
+  --color-canvas: #f4f3f8;
+  --color-canvas-warm: #fdf3ec;
+  --color-canvas-cool: #ece9fb;
+
+  --font-sans: var(--font-sans-family), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-display-family), ui-serif, Georgia, serif;
+
+  --shadow-pill: 0 10px 30px -14px rgba(18, 18, 32, 0.35);
+  --shadow-float: 0 24px 60px -28px rgba(18, 18, 32, 0.45);
+  --shadow-card: 0 18px 50px -30px rgba(18, 18, 32, 0.4);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-soft: cubic-bezier(0.33, 1, 0.68, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ---------------------------------------------------------------------------
+   Base
+--------------------------------------------------------------------------- */
+html {
+  /* Reserve the scrollbar track so locking the page never shifts layout. */
+  scrollbar-gutter: stable;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Scroll lock used while the mobile menu is open. */
+html[data-scroll-locked] {
+  overflow: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background-color: var(--color-brand);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---------------------------------------------------------------------------
+   Lenis smooth scrolling
+   Required stylesheet from the Lenis docs, inlined to avoid an extra import.
+--------------------------------------------------------------------------- */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* Used as the scroll lock while the mobile menu is open. */
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Navigation shell — the frosted pill
+   State is driven by `data-scrolled` on the header so the transition can
+   animate every layer (tint, blur, saturation, elevation) at once.
+--------------------------------------------------------------------------- */
+.nav-shell {
+  --nav-tint: rgba(255, 255, 255, 0.92);
+  --nav-blur: 6px;
+  --nav-saturate: 100%;
+  --nav-hairline: rgba(18, 18, 32, 0.06);
+  --nav-sheen: rgba(255, 255, 255, 0.5);
+  --nav-elevation: 0 10px 30px -18px rgba(18, 18, 32, 0.4);
+
+  background-color: var(--nav-tint);
+  -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+  backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+  box-shadow:
+    inset 0 0 0 1px var(--nav-hairline),
+    inset 0 1px 0 var(--nav-sheen),
+    var(--nav-elevation);
+  transition:
+    background-color 600ms var(--ease-out-expo),
+    box-shadow 600ms var(--ease-out-expo),
+    -webkit-backdrop-filter 600ms var(--ease-out-expo),
+    backdrop-filter 600ms var(--ease-out-expo);
+}
+
+[data-scrolled="true"] .nav-shell {
+  /* Apple-style frost: a light tint doing very little on its own, carried by a
+     heavy blur plus saturation boost so colour bleeds through the glass. */
+  --nav-tint: rgba(255, 255, 255, 0.62);
+  --nav-blur: 24px;
+  --nav-saturate: 180%;
+  --nav-hairline: rgba(18, 18, 32, 0.07);
+  --nav-sheen: rgba(255, 255, 255, 0.75);
+  --nav-elevation: 0 22px 50px -24px rgba(18, 18, 32, 0.5);
+}
+
+/* Fallback for browsers without backdrop-filter: keep the pill legible. */
+@supports not (backdrop-filter: blur(1px)) {
+  .nav-shell,
+  [data-scrolled="true"] .nav-shell {
+    --nav-tint: rgba(255, 255, 255, 0.96);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Hero card deck
+   A tilted stack on phones, a symmetric fan from `md` up. Rotation and lift
+   arrive as custom properties from the component so the two layouts can use
+   different geometry without inline styles winning over the breakpoint.
+--------------------------------------------------------------------------- */
+/* The list item owns the entrance animation (GSAP writes `transform` there and
+   blanks out translate/rotate/scale inline), the inner `.hero-card` owns the
+   resting geometry and hover. Splitting them keeps the two from fighting. */
+.hero-deck > li {
+  /* Resolved per breakpoint below, so the hover rule can be written once. */
+  --card-rotate: var(--stack-rotate, 0deg);
+  --card-lift: 0px;
+
+  z-index: 0;
+}
+
+.hero-deck > li:nth-child(odd) {
+  --stack-rotate: 2.2deg;
+}
+
+.hero-deck > li:nth-child(even) {
+  --stack-rotate: -2.4deg;
+}
+
+.hero-card {
+  rotate: var(--card-rotate);
+  translate: 0 var(--card-lift);
+  transition:
+    translate 550ms var(--ease-out-expo),
+    rotate 550ms var(--ease-out-expo),
+    scale 550ms var(--ease-out-expo),
+    box-shadow 550ms var(--ease-out-expo);
+}
+
+@media (width >= 48rem) {
+  .hero-deck > li {
+    --card-rotate: var(--fan-rotate, 0deg);
+    --card-lift: var(--fan-lift, 0px);
+  }
+}
+
+/* Lift the card out of the deck: it rises, straightens, and comes to the front.
+   Gated on real hover so it never sticks after a tap. */
+@media (hover: hover) {
+  .hero-deck > li:hover {
+    z-index: 2;
+  }
+
+  .hero-deck > li:hover .hero-card {
+    rotate: calc(var(--card-rotate) * 0.35);
+    translate: 0 calc(var(--card-lift) - 1.25rem);
+    scale: 1.025;
+    box-shadow: var(--shadow-float);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Decorative surfaces
+--------------------------------------------------------------------------- */
+/* Both washes are anchored below the section and given a tall radius, so each
+   one deepens toward the bottom edge instead of peaking in the middle. Stop
+   colours are pre-composited against the base so the result lands on the brand
+   lavender / amber rather than a wishy-washy tint. */
+.canvas-aurora {
+  background-image:
+    radial-gradient(
+      70% 140% at -6% 95%,
+      rgba(148, 126, 221, 0.62) 0%,
+      rgba(148, 126, 221, 0.42) 30%,
+      rgba(148, 126, 221, 0.16) 54%,
+      rgba(148, 126, 221, 0) 76%
+    ),
+    radial-gradient(
+      58% 128% at 106% 96%,
+      rgba(237, 179, 106, 0.46) 0%,
+      rgba(237, 179, 106, 0.3) 32%,
+      rgba(237, 179, 106, 0.11) 56%,
+      rgba(237, 179, 106, 0) 78%
+    ),
+    linear-gradient(180deg, #f6f4fc 0%, #f0edf8 100%);
+}
+
+.canvas-grid {
+  background-image:
+    linear-gradient(to right, rgba(18, 18, 40, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(18, 18, 40, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 45%,
+    #000 45%,
+    transparent 85%
+  );
+  mask-image: radial-gradient(circle at 50% 45%, #000 45%, transparent 85%);
+}
+
+/* ---------------------------------------------------------------------------
+   Entrance animations
+   Elements start hidden in CSS so there is no hydration flash; JS (GSAP)
+   reveals them. `<noscript>` restores visibility when JS is unavailable.
+--------------------------------------------------------------------------- */
+@keyframes nav-drop {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -14px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.animate-nav-drop {
+  animation: nav-drop 800ms var(--ease-out-expo) both;
+}
+
+[data-reveal] {
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Motion preferences
+--------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-reveal] {
+    opacity: 1;
+  }
 }
