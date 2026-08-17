@@ -22,6 +22,9 @@ const REVEAL_TRAVEL = 240;
  * holds the very spot it will occupy at rest while the card rides up and off
  * it. The card is opaque and painted above, so the card's own bottom edge is
  * what does the masking.
+ *
+ * When the document scrolls less than `REVEAL_TRAVEL`, the tuck shrinks to
+ * match; the cancellation stays 1:1 and the wordmark still ends at rest.
  */
 export function BrandReveal() {
   const windowRef = useRef<HTMLDivElement>(null);
@@ -41,7 +44,13 @@ export function BrandReveal() {
     media.add("(prefers-reduced-motion: no-preference)", () => {
       gsap.fromTo(
         mark,
-        { y: -REVEAL_TRAVEL },
+        {
+          // Never tuck further than the page can scroll back. On a viewport tall
+          // enough to fit the whole page there is no scroll to spend, so the
+          // wordmark starts — and stays — at rest instead of hiding behind the
+          // card forever. Re-evaluated on refresh via `invalidateOnRefresh`.
+          y: () => -Math.min(REVEAL_TRAVEL, ScrollTrigger.maxScroll(window)),
+        },
         {
           y: 0,
           ease: "none",

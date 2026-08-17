@@ -16,17 +16,18 @@ import { SiteCta } from "@/features/marketing/components/site-cta";
  */
 export function SiteFooter() {
   return (
-    <div className="mx-auto w-full max-w-7xl px-5 pt-10 pb-6 sm:pt-16">
+    <div className="mx-auto w-full max-w-7xl px-5 pt-10 sm:pt-16">
       <SiteCta content={ctaContent} />
 
       <footer>
         <BrandReveal />
 
         {/* Rides the bottom of the viewport while the wordmark reveals behind
-            it. The stick offset matches the wrapper's bottom padding, so the
-            bar's resting place at full scroll is exactly where it was pinned
-            and it settles without a jump. */}
-        <div className="sticky bottom-6 z-20 flex flex-col gap-5 rounded-[1.5rem] bg-ink-strong px-6 py-5 text-[13px] text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+            it. The stick offset matches the wrapper's bottom padding — both are
+            zero — so the bar's resting place at full scroll is exactly where it
+            was pinned and it settles without a jump. Flush with the viewport
+            edge, so only the top corners are rounded. */}
+        <div className="sticky bottom-0 z-20 flex flex-col gap-5 rounded-t-[1.5rem] bg-ink-strong px-6 py-5 text-[13px] text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <p>
             © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
           </p>

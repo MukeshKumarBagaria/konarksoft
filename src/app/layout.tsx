@@ -33,8 +33,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${fontVariables} h-full`}>
-      <body className="flex min-h-full flex-col antialiased">
+    <html lang="en" className={fontVariables}>
+      {/* `min-h-dvh`, not `min-h-full`: Lenis sets `html { height: auto }` on
+          itself, so a percentage min-height here would resolve against an auto
+          height and collapse to the content — leaving short pages with a gap
+          under the footer. Viewport units sidestep the dependency entirely. */}
+      <body className="flex min-h-dvh flex-col antialiased">
         {/* Entrance animations start hidden in CSS; without JS they must not stay hidden. */}
         <noscript>
           <style>{`[data-reveal]{opacity:1 !important}`}</style>
