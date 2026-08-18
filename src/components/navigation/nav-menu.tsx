@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useId, useRef, useState } from "react";
 
-import { useIsActive } from "@/components/navigation/nav-link";
+import { matchesPath, useIsActive } from "@/components/navigation/nav-link";
 import { ChevronDownIcon } from "@/components/ui/icons";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { cn } from "@/lib/utils/cn";
@@ -33,8 +34,11 @@ function MenuItem({ label, href, description }: NavLink) {
           <span className="block text-[15px] leading-tight font-semibold text-ink">
             {label}
           </span>
+          {/* Wraps rather than truncates: the description ends in a price,
+              which is the whole reason the menu was opened, and an ellipsis
+              lands squarely on it. */}
           {description ? (
-            <span className="mt-0.5 block truncate text-[13px] leading-tight text-muted">
+            <span className="mt-0.5 block text-[13px] leading-snug text-muted">
               {description}
             </span>
           ) : null}
@@ -61,6 +65,12 @@ export function NavMenu({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  // One `usePathname()` for the whole menu: the trigger has to read as active
+  // while you are on any page inside it, or the header goes blank on the very
+  // pages the menu exists to reach.
+  const pathname = usePathname();
+  const hasActiveItem = items.some((item) => matchesPath(pathname, item.href));
+
   useDismiss({
     open,
     onDismiss: () => setOpen(false),
@@ -86,7 +96,7 @@ export function NavMenu({
         }}
         className={cn(
           "flex items-center gap-1 rounded-full py-1 text-[15px] font-medium transition-colors duration-200",
-          open ? "text-ink" : "text-ink/70 hover:text-ink",
+          open || hasActiveItem ? "text-ink" : "text-ink/70 hover:text-ink",
         )}
       >
         {label}
@@ -109,7 +119,7 @@ export function NavMenu({
           }
         }}
         className={cn(
-          "absolute top-[calc(100%+1.15rem)] left-1/2 w-72 -translate-x-1/2 origin-top",
+          "absolute top-[calc(100%+1.15rem)] left-1/2 w-80 -translate-x-1/2 origin-top",
           // Opaque by design: the frosted pill is a backdrop root, so a
           // `backdrop-filter` on anything nested inside it would be inert.
           "rounded-3xl bg-white p-2 ring-1 shadow-float ring-hairline",

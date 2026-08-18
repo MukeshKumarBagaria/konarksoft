@@ -7,12 +7,22 @@ import { useIsActive } from "@/components/navigation/nav-link";
 import { useSmoothScroll } from "@/components/providers/smooth-scroll-provider";
 import { buttonStyles } from "@/components/ui/button";
 import { CloseIcon, MenuIcon, PhoneIcon } from "@/components/ui/icons";
-import { primaryCta, sitePages } from "@/config/navigation";
+import { mainNav, primaryCta } from "@/config/navigation";
 import { useDismiss } from "@/hooks/use-dismiss";
 import { cn } from "@/lib/utils/cn";
 import type { NavLink } from "@/types/navigation";
 
-function MobileNavItem({ label, href, description }: NavLink) {
+/**
+ * `compact` marks an entry nested under a group heading, which is the only
+ * thing separating a service from a top-level destination once both are in the
+ * same column.
+ */
+function MobileNavItem({
+  label,
+  href,
+  description,
+  compact,
+}: NavLink & { compact?: boolean }) {
   const isActive = useIsActive(href);
 
   return (
@@ -21,15 +31,26 @@ function MobileNavItem({ label, href, description }: NavLink) {
         href={href}
         aria-current={isActive ? "page" : undefined}
         className={cn(
-          "flex items-baseline justify-between gap-4 rounded-2xl px-4 py-3 transition-colors duration-200",
+          "block rounded-2xl px-4 transition-colors duration-200",
+          compact ? "py-2.5" : "py-3",
           isActive ? "bg-black/[0.045]" : "hover:bg-black/[0.03]",
         )}
       >
-        <span className="text-lg font-semibold tracking-[-0.01em] text-ink">
+        {/* Stacked rather than label-left / description-right: the service
+            descriptions carry a price, and in a narrow panel a truncated
+            price is worse than no price. */}
+        <span
+          className={cn(
+            "block font-semibold tracking-[-0.01em] text-ink",
+            compact ? "text-[16px]" : "text-lg",
+          )}
+        >
           {label}
         </span>
         {description ? (
-          <span className="truncate text-[13px] text-muted">{description}</span>
+          <span className="mt-0.5 block text-[13px] leading-snug text-muted">
+            {description}
+          </span>
         ) : null}
       </Link>
     </li>
@@ -39,6 +60,10 @@ function MobileNavItem({ label, href, description }: NavLink) {
 /**
  * Compact navigation for narrow viewports: a disclosure button plus a frosted
  * panel that drops out of the header pill.
+ *
+ * It renders `mainNav`, the same source the desktop bar reads, so the two can
+ * never drift — a menu on desktop becomes a labelled group here rather than a
+ * second dropdown inside an already-open panel.
  */
 export function MobileNav() {
   const [open, setOpen] = useState(false);
@@ -117,9 +142,26 @@ export function MobileNav() {
       >
         {/* No nested <nav>: this list already lives inside the main navigation. */}
         <ul className="flex flex-col">
-          {sitePages.map((page) => (
-            <MobileNavItem key={page.href} {...page} />
-          ))}
+          {mainNav.map((item) =>
+            item.kind === "link" ? (
+              <MobileNavItem
+                key={item.href}
+                label={item.label}
+                href={item.href}
+              />
+            ) : (
+              <li key={item.label}>
+                <p className="px-4 pt-4 pb-1 text-[12px] font-bold tracking-[0.14em] text-ink/40 uppercase">
+                  {item.label}
+                </p>
+                <ul className="flex flex-col">
+                  {item.items.map((service) => (
+                    <MobileNavItem key={service.href} {...service} compact />
+                  ))}
+                </ul>
+              </li>
+            ),
+          )}
         </ul>
 
         <Link
