@@ -5,17 +5,17 @@ import { NavMenu } from "@/components/navigation/nav-menu";
 import type { NavItem } from "@/types/navigation";
 
 /**
- * Primary links for viewports wide enough to show them.
- * The interpuncts between items are decorative, so they are drawn with a
- * pseudo-element rather than added to the DOM.
+ * Primary links for viewports wide enough to show them. Spacing is a plain
+ * flex gap: the separators the items used to be strung on were decorative, and
+ * with four entries left there is nothing to disambiguate.
  */
 export function DesktopNav({ items }: { items: readonly NavItem[] }) {
   return (
-    <ul className="hidden items-center lg:flex">
+    <ul className="hidden items-center gap-7 lg:flex">
       {items.map((item) => (
         <li
           key={item.kind === "menu" ? item.label : item.href}
-          className="flex items-center before:mx-3 before:text-[13px] before:text-ink/25 before:content-['•'] first:before:hidden"
+          className="flex items-center"
         >
           {item.kind === "menu" ? (
             <NavMenu label={item.label} items={item.items} />
