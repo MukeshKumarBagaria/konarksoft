@@ -38,8 +38,9 @@ npm run typecheck  # tsc --noEmit
 | Variable               | Required | Purpose                                                     |
 | ---------------------- | -------- | ----------------------------------------------------------- |
 | `NEXT_PUBLIC_SITE_URL` | Optional | Absolute URL for canonical tags, Open Graph, sitemap, robots. Defaults to `http://localhost:3000`. |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | **Before running ads** | The line every WhatsApp CTA on the landing pages opens. Country code first, digits only (e.g. `919876543210`). Defaults to the placeholder `919000000000`. |
 
-Set it to the deployed origin in production. See `.env.example`.
+Set both to real values in production. See `.env.example`.
 
 ## Architecture
 
@@ -61,6 +62,7 @@ src/
 ├── config/               site metadata, navigation, fonts
 ├── content/              all page copy, one file per page
 ├── features/
+│   ├── landing/          page sections for the ad landing route group
 │   └── marketing/        page sections for the marketing route group
 ├── hooks/                shared client hooks
 ├── lib/{utils,seo}/      dependency-free helpers
@@ -104,6 +106,35 @@ export default function RoutePage() {
 
 Typed routes are enabled, so an `href` that does not resolve to a real route
 fails the build.
+
+### Ad landing pages
+
+`app/(landing)/` holds the destinations for paid campaigns:
+`/website-development`, `/mobile-app-development`, `/meta-google-ads` and
+`/ai-content-creation`. Each is a content file plus a four-line route —
+`LandingPage` assembles the same nine sections for all of them, because the
+section order *is* the sales argument and it does not change between services.
+
+They deliberately break several of the marketing site's conventions, and the
+reasons matter if you edit them:
+
+- **No site navigation.** The group has its own header (wordmark and a phone
+  number) and a three-link footer. Every other link is a way to leave without
+  converting.
+- **No scroll reveals.** The marketing pages fade sections in with GSAP;
+  `[data-reveal]` starts at `opacity: 0`, and content that starts invisible can
+  fail to arrive on a slow connection. Landing pages render everything outright.
+- **Every CTA ends in WhatsApp.** `features/landing/whatsapp.ts` binds the pure
+  helpers in `lib/utils/whatsapp.ts` to `siteConfig.whatsappNumber`, and each
+  button carries its own prefilled message so an enquiry arrives already
+  qualified. The lead form composes one from its fields rather than posting
+  anywhere — see the note in `lead-form.tsx` for the trade-off.
+- **Pricing sits fourth, not last.** Price is the first objection in this
+  market; burying it is what makes ad traffic bounce.
+
+Copy lives in `content/<page>.ts` like everywhere else, typed by
+`LandingContent`. New landing pages go in `config/navigation.ts` under
+`landingPages` — which feeds `sitemap.xml` but not the site's menus.
 
 ## Design system
 

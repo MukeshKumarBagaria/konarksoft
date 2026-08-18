@@ -6,9 +6,18 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import type { NavLink as NavLinkType } from "@/types/navigation";
 
+/**
+ * Pure form of the active check, so a component holding several hrefs can test
+ * them all from one `usePathname()` call rather than breaking the rules of
+ * hooks to loop over them.
+ */
+export function matchesPath(pathname: string, href: string): boolean {
+  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+}
+
 export function useIsActive(href: string): boolean {
   const pathname = usePathname();
-  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+  return matchesPath(pathname, href);
 }
 
 export function NavLink({ label, href }: NavLinkType) {

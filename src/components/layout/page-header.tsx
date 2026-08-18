@@ -1,17 +1,24 @@
 import type { ReactNode } from "react";
 
+import { UnderlineStroke } from "@/components/ui/underline-stroke";
+
 /**
  * Shared heading block for inner pages, so every route opens with the same
  * rhythm and a single `<h1>`.
+ *
+ * `accent` closes the heading in the display serif, underlined — the same
+ * treatment the home hero gives its second line. Omit it for a plain title.
  */
 export function PageHeader({
   eyebrow,
   title,
+  accent,
   description,
   children,
 }: {
   eyebrow: string;
   title: string;
+  accent?: string;
   description: string;
   children?: ReactNode;
 }) {
@@ -27,6 +34,15 @@ export function PageHeader({
         </p>
         <h1 className="mt-5 text-[clamp(2.25rem,5.2vw,4.25rem)] leading-[1.02] font-extrabold tracking-[-0.035em] text-ink text-balance">
           {title}
+          {accent ? (
+            <>
+              {" "}
+              <span className="relative inline-block font-display text-[1.06em] font-normal italic text-brand">
+                {accent}
+                <UnderlineStroke />
+              </span>
+            </>
+          ) : null}
         </h1>
         <p className="mx-auto mt-6 max-w-xl text-lg text-muted text-pretty">
           {description}

@@ -9,7 +9,7 @@ import type { PageContent } from "@/types/content";
 export function createPageMetadata({
   meta,
   canonical,
-}: PageContent): Metadata {
+}: Pick<PageContent, "meta" | "canonical">): Metadata {
   return {
     title: meta.title,
     description: meta.description,

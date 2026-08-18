@@ -30,6 +30,15 @@
   --color-canvas-warm: #fdf3ec;
   --color-canvas-cool: #ece9fb;
 
+  /* WhatsApp's green, kept off the brand ramp on purpose: on the ad landing
+     pages it marks the one control that leaves for WhatsApp, and that
+     recognition converts better than a brand-coloured button would. Taken two
+     steps darker than the logo green — white on #25d366 measures 3.0:1, which
+     fails on button labels; these land at 4.8:1 and still read as WhatsApp
+     next to the glyph. */
+  --color-whatsapp: #17843f;
+  --color-whatsapp-strong: #12692f;
+
   --font-sans: var(--font-sans-family), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-display-family), ui-serif, Georgia, serif;
 
@@ -141,6 +150,58 @@ html.lenis body {
   .nav-shell,
   [data-scrolled="true"] .nav-shell {
     --nav-tint: rgba(255, 255, 255, 0.96);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Services dropdown — the one piece of real glass in the header
+   It can only be glass because the panel is portalled to `<body>`. The pill
+   above sets `backdrop-filter`, which makes it a backdrop root, and a blur
+   nested inside one samples the root's own contents rather than the page —
+   which is why the panels that stay inside it are opaque by design. Out here it
+   frosts what it actually overlaps.
+
+   The tint is held well above Apple's thinnest material because this panel
+   routinely lands on the hero's saturated cards rather than on a neutral
+   desktop. Thinner than this and the 13px descriptions fall under 4.5:1 against
+   the colour bleeding through, which is the line this must not cross.
+--------------------------------------------------------------------------- */
+.nav-glass {
+  --glass-tint: rgba(255, 255, 255, 0.82);
+  --glass-blur: 28px;
+
+  background-color: var(--glass-tint);
+  /* Specular sweep across the top-left, in `background-image` rather than a
+     pseudo-element so it can never wash over the panel's own text. */
+  background-image: linear-gradient(
+    158deg,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 255, 255, 0.12) 46%,
+    rgba(255, 255, 255, 0) 74%
+  );
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(180%);
+  /* Rim, then a brighter sheen along the top edge where a real pane would catch
+     the light, then a hairline outside it so the silhouette still reads where a
+     white edge would dissolve into a pale background. */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 1px rgba(18, 18, 32, 0.06),
+    0 26px 60px -26px rgba(18, 18, 32, 0.45);
+}
+
+/* Without a backdrop to blur, the tint alone reads as washed-out white. */
+@supports not (backdrop-filter: blur(1px)) {
+  .nav-glass {
+    --glass-tint: rgba(255, 255, 255, 0.97);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .nav-glass {
+    --glass-tint: rgba(255, 255, 255, 0.97);
+    --glass-blur: 0px;
   }
 }
 
@@ -488,6 +549,111 @@ html.lenis body {
 }
 
 /* ---------------------------------------------------------------------------
+   About page
+   Three surfaces of its own: the frosted stage the studio film will play in,
+   the field the mission orbits are drawn on, and the tinted tiles standing in
+   for artwork that has not been shot yet.
+--------------------------------------------------------------------------- */
+/* The same pane as `.hero-card` minus the geometry — this one never rotates or
+   lifts, so only the lighting carries over: a rim around the edge, a sheen along
+   the top where a real pane would catch the light, and a seat line beneath. */
+.about-stage {
+  --stage-tint: rgba(255, 255, 255, 0.55);
+  --stage-blur: 26px;
+
+  background-color: var(--stage-tint);
+  background-image: linear-gradient(
+    152deg,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.12) 46%,
+    rgba(255, 255, 255, 0) 72%
+  );
+  -webkit-backdrop-filter: blur(var(--stage-blur)) saturate(170%);
+  backdrop-filter: blur(var(--stage-blur)) saturate(170%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(18, 18, 32, 0.05),
+    0 0 0 1px rgba(18, 18, 32, 0.055),
+    0 2px 8px -5px rgba(18, 18, 32, 0.2),
+    0 34px 70px -34px rgba(18, 18, 32, 0.45);
+}
+
+/* Without a backdrop to blur, the tint alone reads as washed-out white. */
+@supports not (backdrop-filter: blur(1px)) {
+  .about-stage {
+    --stage-tint: rgba(255, 255, 255, 0.92);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .about-stage {
+    --stage-tint: rgba(255, 255, 255, 0.94);
+    --stage-blur: 0px;
+  }
+}
+
+/* Every placeholder for a photo or a film. Light enters from the top-left, the
+   same direction as the work cards' media panels, so the two sit in one world.
+   Stops come from the component as `--tone-from` / `--tone-to`. */
+.about-tile {
+  background-image:
+    radial-gradient(
+      118% 88% at 16% 6%,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0) 58%
+    ),
+    linear-gradient(148deg, var(--tone-from) 0%, var(--tone-to) 100%);
+}
+
+/* The mission field. Warm and cool washes overlap at the centre, right under
+   the statement, so the orbits appear to be lit by what they circle rather than
+   drawn on a flat panel. */
+.about-field {
+  background-image:
+    radial-gradient(
+      46% 62% at 50% 40%,
+      rgba(242, 74, 46, 0.11) 0%,
+      rgba(242, 74, 46, 0) 70%
+    ),
+    radial-gradient(
+      62% 82% at 50% 46%,
+      rgba(122, 95, 211, 0.14) 0%,
+      rgba(122, 95, 211, 0) 74%
+    ),
+    linear-gradient(180deg, #ffffff 0%, #faf8fe 58%, #f5f2fb 100%);
+}
+
+/* Scrim over the orbits, under the copy. The rings cross the middle of the
+   section, and a travelling segment passing through a line of type reads as a
+   strikethrough — so the middle is lifted almost to white and the rings are left
+   to carry the outer field. What is left of them behind the statement reads as
+   the glow the copy sits in. */
+.about-orbit-scrim {
+  background-image: radial-gradient(
+    46% 38% at 50% 44%,
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.88) 42%,
+    rgba(255, 255, 255, 0) 78%
+  );
+}
+
+/* The orbits have to end before they reach the section's edges, where three
+   stray arcs would read as stripes rather than as one system. */
+.about-orbits {
+  -webkit-mask-image: radial-gradient(
+    closest-side at 50% 50%,
+    #000 40%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    closest-side at 50% 50%,
+    #000 40%,
+    transparent 100%
+  );
+}
+
+/* ---------------------------------------------------------------------------
    Decorative surfaces
 --------------------------------------------------------------------------- */
 /* Both washes are anchored below the section and given a tall radius, so each
@@ -624,6 +790,116 @@ html.lenis body {
     transparent 85%
   );
   mask-image: radial-gradient(circle at 50% 45%, #000 45%, transparent 85%);
+}
+
+/* ---------------------------------------------------------------------------
+   Ad landing pages
+   Paid traffic arrives cold, on a phone, one thumb-scroll from leaving, so
+   these surfaces are deliberately quieter than the rest of the site: light
+   fields, plain white cards, and colour spent only where it has a job —
+   marking the recommended plan and the one block that is meant to feel
+   premium. Nothing here blurs, tilts or animates on scroll.
+--------------------------------------------------------------------------- */
+/* The field behind the hero and the closing form — the page's only two tinted
+   bookends. Warm at the top-left, cool at the top-right, resolving to plain
+   white well before the copy starts, so the headline is read off paper rather
+   than off a gradient. Kept far paler than the marketing site's aurora: this
+   page is asking someone to part with money, and the surfaces should stay out
+   of the way of the words that do the asking. */
+.lp-field {
+  background-image:
+    radial-gradient(
+      58% 54% at 4% 0%,
+      rgba(242, 74, 46, 0.1) 0%,
+      rgba(242, 74, 46, 0) 62%
+    ),
+    radial-gradient(
+      52% 50% at 99% 2%,
+      rgba(122, 95, 211, 0.11) 0%,
+      rgba(122, 95, 211, 0) 64%
+    ),
+    linear-gradient(180deg, #fdf8f6 0%, #ffffff 70%);
+}
+
+/* The recommended plan, and one of only two dark surfaces on the page. Ink
+   with a brand glow in the corner reads as the premium option without a louder
+   badge or a second accent colour — and white on this measures better than 15:1,
+   so the longest feature list on the page is also the most legible. */
+.lp-plan-dark {
+  background-color: #0f0d14;
+  background-image:
+    radial-gradient(
+      74% 58% at 4% -8%,
+      rgba(242, 74, 46, 0.4) 0%,
+      rgba(15, 13, 20, 0) 62%
+    ),
+    radial-gradient(
+      62% 58% at 104% 6%,
+      rgba(122, 95, 211, 0.28) 0%,
+      rgba(15, 13, 20, 0) 66%
+    ),
+    linear-gradient(168deg, #1b1724 0%, #0f0d14 58%, #150a0f 100%);
+}
+
+/* The custom option, and the only dark block on the page. It closes the
+   pricing section, so the change of ground is what says "this one is quoted,
+   not listed". Warm glow top-left, cool bottom-right — the same pairing the
+   hero opens with, inverted. */
+.lp-custom {
+  background-color: #14101c;
+  background-image:
+    radial-gradient(
+      64% 108% at 6% 0%,
+      rgba(242, 74, 46, 0.5) 0%,
+      rgba(20, 16, 28, 0) 62%
+    ),
+    radial-gradient(
+      58% 104% at 100% 100%,
+      rgba(122, 95, 211, 0.46) 0%,
+      rgba(20, 16, 28, 0) 66%
+    ),
+    linear-gradient(142deg, #1e1633 0%, #14101c 56%, #1c0e17 100%);
+}
+
+/* ---------------------------------------------------------------------------
+   FAQ
+   Native `<details>`, so the accordion works before any JavaScript loads and
+   the browser's own find-in-page can open a closed answer.
+--------------------------------------------------------------------------- */
+.lp-faq summary {
+  /* Both are needed: Safari ships a marker only WebKit's pseudo can remove. */
+  list-style: none;
+}
+
+.lp-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+/* The plus loses its vertical stroke to become a minus. Scaling the stem
+   rather than swapping icons keeps the horizontal bar perfectly still. */
+.faq-plus-stem {
+  transform-origin: center;
+  transition: scale 260ms var(--ease-out-soft);
+}
+
+.lp-faq details[open] .faq-plus-stem {
+  scale: 1 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Sticky offer bar
+   A floating pill pinned to the bottom of the viewport for the whole page. It
+   sits over the content, so the page reserves room for it rather than letting
+   it cover the footer. The rim is an inset ring rather than a border so the
+   pill keeps its exact radius at every size.
+--------------------------------------------------------------------------- */
+.lp-sticky {
+  background-color: #0d0d11;
+  background-image: linear-gradient(96deg, #17171f 0%, #241621 60%, #30161a 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 18px 40px -16px rgba(18, 18, 32, 0.55);
 }
 
 /* ---------------------------------------------------------------------------
