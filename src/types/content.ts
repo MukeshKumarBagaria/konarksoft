@@ -4,8 +4,13 @@ import type { Route } from "next";
 export type HeroCard = {
   /** Displayed as-is, e.g. "01". */
   index: string;
-  /** Emoji used as the card's illustration. Swap for artwork when it exists. */
-  icon: string;
+  /**
+   * The card's illustration, served by URL from `public/`. `width` and `height`
+   * are the source file's true dimensions — `next/image` needs them to reserve
+   * the right space before the file loads, and they differ per icon, so they
+   * cannot be a constant in the component.
+   */
+  icon: { src: string; width: number; height: number };
   title: string;
   /** Small serif line under the title, rendered uppercase. */
   kicker: string;
