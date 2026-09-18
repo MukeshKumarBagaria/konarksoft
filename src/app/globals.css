@@ -431,6 +431,42 @@ html.lenis body {
 }
 
 /* ---------------------------------------------------------------------------
+   Case studies
+   Each project paints its own two surfaces from the tone it carries in the
+   portfolio, so a case study announces its identity without departing from the
+   geometry every other inner page uses.
+--------------------------------------------------------------------------- */
+
+/* The hero field. The project's wash pools in the two bottom corners the same
+   way `.canvas-aurora` does, over a near-white base — so seven differently
+   toned heroes still read as the same page template. */
+.case-field {
+  background-image:
+    radial-gradient(
+      64% 130% at -4% 98%,
+      var(--tone-wash) 0%,
+      rgba(255, 255, 255, 0) 72%
+    ),
+    radial-gradient(
+      56% 120% at 104% 96%,
+      var(--tone-wash) 0%,
+      rgba(255, 255, 255, 0) 74%
+    ),
+    linear-gradient(180deg, #ffffff 0%, #fbfafe 100%);
+}
+
+/* The approach band. A flat wash top to bottom, held light enough that the
+   white step cards sitting on it keep their edge. */
+.case-approach {
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    var(--tone-wash) 36%,
+    var(--tone-wash) 100%
+  );
+}
+
+/* ---------------------------------------------------------------------------
    Pricing
    The block sits on a warm field that deepens downward. Its two plans are
    painted from opposite ends of the palette — an ember card burning amber →
@@ -760,6 +796,23 @@ html.lenis body {
     rgba(16, 5, 12, 0.44) 24%,
     rgba(16, 5, 12, 0.2) 46%,
     rgba(16, 5, 12, 0) 64%
+  );
+}
+
+/* The case study outcome band uses the same ember surface, but its copy runs
+   the full measure rather than sitting in the card's left half — so the
+   chevron's hot arms pass straight under the heading, where the standard scrim
+   has already faded out. Measured against the lightest pixel behind the white
+   copy, that left the headline at 2.0:1. This variant holds the veil across the
+   whole width, easing only slightly to the right so the arms still read behind
+   the figures; the worst run of copy on it measures 6.3:1. */
+.canvas-ember-scrim-wide {
+  background-image: linear-gradient(
+    96deg,
+    rgba(16, 5, 12, 0.62) 0%,
+    rgba(16, 5, 12, 0.56) 42%,
+    rgba(16, 5, 12, 0.44) 72%,
+    rgba(16, 5, 12, 0.32) 100%
   );
 }
 

@@ -1,19 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useRef, type CSSProperties } from "react";
 
 import { useHorizontalSmoothScroll } from "@/components/providers/smooth-scroll-provider";
-import { ChevronRightIcon } from "@/components/ui/icons";
-import type { RecentWorkContent, WorkItem, WorkTone } from "@/types/content";
-
-/** Wash behind the card, then the two stops of its media panel. */
-const toneColors: Record<WorkTone, { wash: string; from: string; to: string }> =
-  {
-    lime: { wash: "#e9f8cb", from: "#d3f294", to: "#7ec53c" },
-    violet: { wash: "#eae6fd", from: "#b9a8f7", to: "#5b46c9" },
-    amber: { wash: "#fdeedd", from: "#fbc98a", to: "#e8762a" },
-    sky: { wash: "#e2f1fb", from: "#a6d8f5", to: "#3d8fd1" },
-  };
+import { ArrowUpRightIcon, ChevronRightIcon } from "@/components/ui/icons";
+import { ProjectArtwork } from "@/features/marketing/components/project-artwork";
+import { workToneColors } from "@/features/marketing/work-tones";
+import type { RecentWorkContent, WorkItem } from "@/types/content";
 
 /**
  * Copies of the list the rail holds. Three keeps a whole set of slack on either
@@ -55,40 +49,72 @@ function RailButton({
   );
 }
 
-function WorkCard({ item }: { item: WorkItem }) {
-  const tone = toneColors[item.tone];
+/**
+ * One project in the rail.
+ *
+ * `interactive` is false on the duplicated copies: the rail renders the list
+ * three times to make the loop seamless, and a link repeated three times would
+ * put the same destination into the tab order three times over.
+ */
+function WorkCard({
+  item,
+  interactive,
+}: {
+  item: WorkItem;
+  interactive: boolean;
+}) {
+  const tone = workToneColors[item.tone];
 
   return (
     <article
       style={
         {
           "--tone-wash": tone.wash,
-          "--tone-from": tone.from,
-          "--tone-to": tone.to,
+          "--tone-ink": tone.ink,
         } as CSSProperties
       }
-      className="work-card rounded-[1.75rem] p-4 ring-1 ring-hairline sm:p-5"
+      className="work-card group relative rounded-[1.75rem] p-4 ring-1 ring-hairline transition-[box-shadow,translate] duration-500 ease-out-soft hover:-translate-y-1 hover:shadow-float sm:p-5"
     >
-      <div className="px-2 pt-2">
-        <h3 className="text-2xl leading-tight font-bold tracking-[-0.02em] text-ink sm:text-[1.75rem]">
-          {item.title}
-        </h3>
+      <div className="flex items-start justify-between gap-4 px-2 pt-2">
+        <div className="min-w-0">
+          <h3 className="text-2xl leading-tight font-bold tracking-[-0.02em] text-ink sm:text-[1.75rem]">
+            {interactive ? (
+              <Link
+                href={{ pathname: `/work/${item.slug}` }}
+                className="after:absolute after:inset-0 after:rounded-[1.75rem] focus-visible:outline-none"
+              >
+                {item.title}
+              </Link>
+            ) : (
+              item.title
+            )}
+          </h3>
 
-        <ul className="mt-3.5 flex flex-wrap gap-2">
-          {item.tags.map((tag) => (
-            <li
-              key={tag}
-              className="rounded-full bg-white/85 px-3.5 py-1.5 text-[13px] font-medium text-ink/75 ring-1 ring-hairline"
-            >
-              {tag}
-            </li>
-          ))}
-        </ul>
+          <ul className="mt-3.5 flex flex-wrap gap-2">
+            {item.tags.map((tag) => (
+              <li
+                key={tag}
+                className="rounded-full bg-white/85 px-3.5 py-1.5 text-[13px] font-medium text-ink/75 ring-1 ring-hairline"
+              >
+                {tag}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <span
+          aria-hidden="true"
+          className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/85 text-ink ring-1 ring-hairline transition-[scale,background] duration-300 ease-out-soft group-hover:scale-105 group-hover:bg-white"
+        >
+          <ArrowUpRightIcon className="h-4 w-4" />
+        </span>
       </div>
 
-      <div
-        aria-hidden="true"
-        className="work-media mt-5 aspect-[16/10] rounded-[1.25rem]"
+      <ProjectArtwork
+        tone={item.tone}
+        wordmark={item.wordmark}
+        displayUrl={item.displayUrl}
+        className="mt-5 aspect-[16/10] rounded-[1.25rem]"
       />
     </article>
   );
@@ -212,7 +238,17 @@ export function RecentWork({ content }: { content: RecentWorkContent }) {
           </span>
         </h2>
 
-        <div className="flex shrink-0 gap-3">
+        <div className="flex shrink-0 items-center gap-3">
+          {/* The rail loops, so it has no end to arrive at — this is the only
+              way out of it and into the full portfolio. */}
+          <Link
+            href="/work"
+            className="mr-1 hidden items-center gap-1.5 text-[15px] font-semibold text-ink/70 transition-colors hover:text-ink sm:inline-flex"
+          >
+            View all work
+            <ArrowUpRightIcon className="h-4 w-4" />
+          </Link>
+
           <RailButton
             label="Previous projects"
             onClick={() => step(-1)}
@@ -247,11 +283,23 @@ export function RecentWork({ content }: { content: RecentWorkContent }) {
                 aria-hidden={copy > 0 || undefined}
                 className="w-[var(--work-card)] shrink-0"
               >
-                <WorkCard item={item} />
+                <WorkCard item={item} interactive={copy === 0} />
               </li>
             )),
           )}
         </ul>
+      </div>
+
+      {/* The header's link is desktop-only — the arrows and the heading already
+          fill that row on a phone — so the mobile way out sits under the rail. */}
+      <div className="mt-10 px-5 sm:hidden">
+        <Link
+          href="/work"
+          className="inline-flex items-center gap-1.5 text-[15px] font-semibold text-ink"
+        >
+          View all work
+          <ArrowUpRightIcon className="h-4 w-4" />
+        </Link>
       </div>
     </section>
   );

@@ -1,35 +1,24 @@
-import { siteConfig } from "@/config/site";
-import type { PageContent, RecentWorkContent } from "@/types/content";
+import { caseStudies } from "@/content/portfolio";
+import type { RecentWorkContent } from "@/types/content";
 
-export const workContent: PageContent = {
-  meta: {
-    title: "Work",
-    description: `Selected websites, mobile apps and ad campaigns delivered by ${siteConfig.name}.`,
-  },
-  canonical: "/work",
-  header: {
-    eyebrow: "Work",
-    title: "Selected projects",
-    description:
-      "A short list of recent engagements. Case studies are published as each client goes live.",
-  },
-};
-
-/** Placeholder projects — swap in real client names and disciplines. */
+/**
+ * The home page rail, derived from the published case studies rather than
+ * written out again — so a project added to the portfolio appears on the home
+ * page with its real name, tone and disciplines, and can never fall out of step
+ * with the case study it links to.
+ *
+ * Trimmed to the first four: the rail loops, and a longer set only lengthens
+ * the scroll before a repeat without adding anything the `/work` index does not
+ * already do better.
+ */
 export const recentWorkContent: RecentWorkContent = {
   heading: { lead: "Our Recent", accent: "Work" },
-  items: [
-    { title: "Ignite Flow", tags: ["Branding", "UI/UX Design"], tone: "lime" },
-    {
-      title: "Spark Layer",
-      tags: ["Web App", "Development"],
-      tone: "violet",
-    },
-    {
-      title: "Northbeam",
-      tags: ["Mobile App", "UI/UX Design"],
-      tone: "amber",
-    },
-    { title: "Meridian", tags: ["Meta Ads", "Google Ads"], tone: "sky" },
-  ],
+  items: caseStudies.slice(0, 4).map((study) => ({
+    title: study.name,
+    tags: study.disciplines,
+    tone: study.tone,
+    slug: study.slug,
+    wordmark: study.wordmark,
+    displayUrl: study.displayUrl,
+  })),
 };

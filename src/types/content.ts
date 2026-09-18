@@ -26,14 +26,30 @@ export type HeroContent = {
   cards: readonly HeroCard[];
 };
 
-/** Palette a work card is painted in. Resolved to colours by the component. */
-export type WorkTone = "lime" | "violet" | "amber" | "sky";
+/**
+ * Palette a work card is painted in. Resolved to colours by the component.
+ * One tone per project in the portfolio, so no two cards in a row share a wash.
+ */
+export type WorkTone =
+  | "lime"
+  | "violet"
+  | "amber"
+  | "sky"
+  | "rose"
+  | "teal"
+  | "indigo";
 
 export type WorkItem = {
   title: string;
   /** Disciplines, shown as pills under the title. */
   tags: readonly string[];
   tone: WorkTone;
+  /** The case study this card opens, as a segment under `/work`. */
+  slug: string;
+  /** Set over the card's artwork panel, in place of a screenshot. */
+  wordmark: string;
+  /** The client's live domain, shown in the panel's address bar. */
+  displayUrl: string;
 };
 
 export type RecentWorkContent = {
@@ -352,4 +368,96 @@ export type PageContent = {
     title: string;
     description: string;
   };
+};
+
+/* ---------------------------------------------------------------------------
+   Portfolio
+   The index at `/work` and one case study page per project. Both read from the
+   same records in `content/portfolio.ts`, so a project's name, tone and summary
+   are written once and cannot drift between the card and the page it opens.
+--------------------------------------------------------------------------- */
+
+/** The discipline filters on the index, and the label each project is tagged by. */
+export type CaseStudyDiscipline =
+  | "Website Development"
+  | "E-commerce"
+  | "Mobile App"
+  | "Meta & Google Ads"
+  | "SEO"
+  | "Branding";
+
+/**
+ * A case study, end to end. Every field is rendered on the project's own page;
+ * the index card uses only the summary block at the top.
+ */
+export type CaseStudy = {
+  /** URL segment under `/work`. Must be unique — it keys the static routes. */
+  slug: string;
+  /** Client name as it is written on their own site. */
+  name: string;
+  /** One line under the name on the card. What the business actually is. */
+  category: string;
+  /** The live site, linked from the card and the case study header. */
+  url: string;
+  /** `url` without protocol or trailing slash — what the link shows. */
+  displayUrl: string;
+  /** Painted from the shared work palette. Cards and hero share the tone. */
+  tone: WorkTone;
+  /**
+   * Two or three words set over the project's artwork, in place of a
+   * screenshot. Drawn from the client's own positioning wherever they publish
+   * one, so the tile reads as their brand rather than as our caption.
+   */
+  wordmark: string;
+  /** Disciplines, shown as pills on the card and used by the index filter. */
+  disciplines: readonly CaseStudyDiscipline[];
+  /** The card's one-sentence pitch. */
+  summary: string;
+  /** Year the engagement shipped, shown on the card's meta row. */
+  year: string;
+
+  /* ---- The case study page itself ---- */
+
+  /** Opening statement on the case study, set large under the client name. */
+  headline: string;
+  /** The facts band under the hero: what it was, who it was for, what we did. */
+  facts: readonly { label: string; value: string }[];
+  /** Where the client stood before the engagement. */
+  challenge: { heading: string; body: readonly string[] };
+  /** What we built, as numbered moves. */
+  approach: {
+    heading: string;
+    body: string;
+    steps: readonly { index: string; title: string; description: string }[];
+  };
+  /** The shipped feature set, listed plainly. */
+  delivered: { heading: string; items: readonly string[] };
+  /**
+   * The measurable end of it. Figures are the client's own or drawn from what
+   * the live site publishes — nothing here is modelled or projected.
+   */
+  outcome: {
+    heading: string;
+    body: string;
+    metrics: readonly { value: string; label: string }[];
+  };
+  /** The stack the project runs on, as pills. */
+  stack: readonly string[];
+  /** Optional client quote. Omitted where there is nothing on record. */
+  testimonial?: { quote: string; name: string; role: string };
+};
+
+/** The `/work` index: its heading, its filters and the projects it lists. */
+export type PortfolioContent = {
+  meta: { title: string; description: string };
+  canonical: Route;
+  header: {
+    eyebrow: string;
+    title: string;
+    accent: string;
+    description: string;
+  };
+  /** Headline figures across the whole portfolio, shown under the header. */
+  stats: readonly { value: string; label: string }[];
+  projects: readonly CaseStudy[];
 };
