@@ -3,10 +3,12 @@ import type { ComponentType } from "react";
 
 import { buttonStyles, type ButtonVariant } from "@/components/ui/button";
 import {
+  BoltIcon,
   CheckCircleIcon,
   CheckCircleOutlineIcon,
   CheckIcon,
   PhoneIcon,
+  ShieldCheckIcon,
   UsersIcon,
 } from "@/components/ui/icons";
 import { cn } from "@/lib/utils/cn";
@@ -28,14 +30,18 @@ const toneStyles: Record<
     head: string;
     audience: string;
     flag: string;
-    price: string;
-    period: string;
+    priceNote: string;
     rule: string;
     body: string;
     includes: string;
     feature: string;
     bullet: ComponentType<{ className?: string }>;
     bulletColor: string;
+    bonusShell: string;
+    bonusTitle: string;
+    bonusItem: string;
+    bonusBullet: string;
+    guarantee: string;
     /** Applied to every action after the first. */
     trailingAction: ButtonVariant;
   }
@@ -45,14 +51,18 @@ const toneStyles: Record<
     head: "plan-ember-head ring-1 ring-inset ring-white/25",
     audience: "text-white/90",
     flag: "bg-white/20 text-white ring-1 ring-inset ring-white/30",
-    price: "text-white",
-    period: "text-white/80",
+    priceNote: "text-white/75",
     rule: "border-white/25",
     body: "plan-ember-body ring-1 ring-inset ring-white/10",
     includes: "text-white",
     feature: "text-white/90",
     bullet: CheckCircleIcon,
     bulletColor: "text-white",
+    bonusShell: "bg-white/12 ring-1 ring-inset ring-white/20",
+    bonusTitle: "text-white",
+    bonusItem: "text-white/90",
+    bonusBullet: "text-white",
+    guarantee: "text-white/90",
     trailingAction: "secondary",
   },
   frost: {
@@ -60,14 +70,18 @@ const toneStyles: Record<
     head: "plan-frost-head ring-1 ring-inset ring-hairline",
     audience: "text-muted",
     flag: "bg-rose/10 text-rose ring-1 ring-inset ring-rose/20",
-    price: "text-iris-strong",
-    period: "text-muted",
+    priceNote: "text-muted",
     rule: "border-rose/30",
     body: "plan-frost-body ring-1 ring-inset ring-hairline",
     includes: "text-ink/70",
     feature: "text-ink/85",
     bullet: CheckCircleOutlineIcon,
     bulletColor: "text-rose",
+    bonusShell: "bg-rose/6 ring-1 ring-inset ring-rose/20",
+    bonusTitle: "text-ink",
+    bonusItem: "text-ink/85",
+    bonusBullet: "text-rose",
+    guarantee: "text-ink/75",
     trailingAction: "secondary",
   },
 };
@@ -114,19 +128,13 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
           ) : null}
         </div>
 
-        <p className="mt-5 flex flex-wrap items-baseline gap-x-2">
-          <span
-            className={cn(
-              "text-[clamp(2.1rem,4vw,2.85rem)] leading-none font-bold tracking-[-0.03em]",
-              tone.price,
-            )}
-          >
-            {plan.price}
-          </span>
-          <span className={cn("font-display text-[15px] italic", tone.period)}>
-            /{plan.period}
-          </span>
-        </p>
+        {/* No figure here by design — the card describes the scope, and the
+            number is agreed on the call the button opens. */}
+        {plan.priceNote ? (
+          <p className={cn("mt-5 text-[13px] leading-snug", tone.priceNote)}>
+            {plan.priceNote}
+          </p>
+        ) : null}
       </header>
 
       <div className={cn("mx-2 my-3.5 border-t border-dashed", tone.rule)} />
@@ -170,23 +178,83 @@ function PlanCard({ plan }: { plan: PricingPlan }) {
           ))}
         </ul>
 
+        {plan.bonuses ? (
+          <div
+            className={cn(
+              "mt-6 rounded-2xl px-4 py-4 sm:px-5",
+              tone.bonusShell,
+            )}
+          >
+            <p
+              id={`${slug}-bonuses`}
+              className={cn(
+                "inline-flex items-center gap-2 text-[15px] font-semibold",
+                tone.bonusTitle,
+              )}
+            >
+              <BoltIcon className="h-[18px] w-[18px] shrink-0" />
+              {plan.bonuses.title}
+            </p>
+
+            <ul
+              aria-labelledby={`${slug}-bonuses`}
+              className="mt-3 flex flex-col gap-2.5"
+            >
+              {plan.bonuses.items.map((bonus) => (
+                <li
+                  key={bonus}
+                  className={cn(
+                    "flex items-start gap-2.5 text-[14px] leading-snug",
+                    tone.bonusItem,
+                  )}
+                >
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "mt-px w-[18px] shrink-0 text-center font-semibold",
+                      tone.bonusBullet,
+                    )}
+                  >
+                    +
+                  </span>
+                  {bonus}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
         {/* `mt-auto` against the flex column above pins the actions to the
             card's floor, so the two cards' buttons align even when their
             feature lists differ in length. */}
-        <div className="mt-auto flex flex-col gap-3 pt-8 sm:flex-row">
-          {plan.actions.map((action, index) => (
-            <Link
-              key={action.label}
-              href={action.href}
-              className={buttonStyles({
-                variant: index === 0 ? "primary" : tone.trailingAction,
-                size: "lg",
-                className: "flex-1",
-              })}
+        <div className="mt-auto pt-8">
+          {plan.guarantee ? (
+            <p
+              className={cn(
+                "mb-4 flex items-start gap-2.5 text-[14px] leading-snug",
+                tone.guarantee,
+              )}
             >
-              {action.label}
-            </Link>
-          ))}
+              <ShieldCheckIcon className="mt-px h-[18px] w-[18px] shrink-0" />
+              {plan.guarantee}
+            </p>
+          ) : null}
+
+          <div className="flex flex-col gap-3 sm:flex-row">
+            {plan.actions.map((action, index) => (
+              <Link
+                key={action.label}
+                href={action.href}
+                className={buttonStyles({
+                  variant: index === 0 ? "primary" : tone.trailingAction,
+                  size: "lg",
+                  className: "flex-1",
+                })}
+              >
+                {action.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </div>
     </article>

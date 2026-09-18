@@ -231,17 +231,28 @@ html.lenis body {
   --stack-rotate: -2.4deg;
 }
 
-/* The card face is frosted glass: a tint doing very little on its own, carried
-   by a heavy blur plus a saturation boost so the aurora and grid behind it bleed
-   through in colour. Three inset layers do the lighting — a rim around the whole
-   edge, a brighter sheen along the top where a real pane would catch the light,
-   and a faint dark line along the bottom to seat it. Elevation is a variable so
-   hover can deepen it without restating the stack; keeping the shadow count
-   equal in both states is what lets `box-shadow` transition smoothly. */
+/* The card face reads as glass without being a `backdrop-filter` pane, and that
+   is a performance decision rather than a stylistic one.
+   
+   These four cards scroll underneath the nav pill, which *is* a backdrop-filter
+   layer. Two blurred backdrops stacked like that make the compositor re-blur a
+   backdrop that already contains a blurred region, and it costs a dropped frame
+   roughly every twentieth frame for the whole length of the hero — measured, and
+   removing either layer takes it to none. The pill is small, always on screen
+   and the signature of the shell, so it keeps its frost; these give theirs up.
+   
+   Very little is lost, because of what sits behind them: `.canvas-aurora` is a
+   smooth gradient, and blurring a smooth gradient returns roughly the gradient.
+   The only detail the blur was hiding is the 5%-alpha grid, and a slightly
+   stronger tint hides that on its own. Three inset layers still do the lighting
+   — a rim around the whole edge, a brighter sheen along the top where a real
+   pane would catch the light, and a faint dark line along the bottom to seat it.
+   Elevation is a variable so hover can deepen it without restating the stack;
+   keeping the shadow count equal in both states is what lets `box-shadow`
+   transition smoothly. */
 .hero-card {
-  --card-tint: rgba(255, 255, 255, 0.5);
-  --card-blur: 26px;
-  --card-saturate: 170%;
+  /* Carries the pane on its own now that no blur stands behind it. */
+  --card-tint: rgba(255, 255, 255, 0.62);
   --card-rim: rgba(255, 255, 255, 0.7);
   --card-sheen: rgba(255, 255, 255, 0.95);
   --card-seat: rgba(18, 18, 32, 0.05);
@@ -261,8 +272,6 @@ html.lenis body {
     rgba(255, 255, 255, 0.14) 44%,
     rgba(255, 255, 255, 0) 70%
   );
-  -webkit-backdrop-filter: blur(var(--card-blur)) saturate(var(--card-saturate));
-  backdrop-filter: blur(var(--card-blur)) saturate(var(--card-saturate));
   box-shadow:
     inset 0 0 0 1px var(--card-rim),
     inset 0 1px 0 var(--card-sheen),
@@ -280,18 +289,12 @@ html.lenis body {
     box-shadow 550ms var(--ease-out-expo);
 }
 
-/* Without a backdrop to blur, the tint alone would read as washed-out white, so
-   take the glass nearly opaque and keep the text legible. */
-@supports not (backdrop-filter: blur(1px)) {
-  .hero-card {
-    --card-tint: rgba(255, 255, 255, 0.92);
-  }
-}
-
+/* No `backdrop-filter` here any more, so the browsers that lack it need no
+   fallback. This preference still does: it asks for less see-through, not less
+   blur. */
 @media (prefers-reduced-transparency: reduce) {
   .hero-card {
     --card-tint: rgba(255, 255, 255, 0.94);
-    --card-blur: 0px;
   }
 }
 

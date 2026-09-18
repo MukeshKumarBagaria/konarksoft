@@ -1,12 +1,19 @@
 import type { ReactNode } from "react";
 
-import { PaperPlaneIcon, PhoneIcon } from "@/components/ui/icons";
+import {
+  PaperPlaneIcon,
+  PhoneIcon,
+  WhatsAppIcon,
+} from "@/components/ui/icons";
 import { siteConfig } from "@/config/site";
+import { telLink, whatsappLink } from "@/lib/utils/whatsapp";
 
-/** `tel:` wants the digits, not the spacing a human needs to read the number. */
-function telHref(phone: string) {
-  return `tel:${phone.replace(/[^\d+]/g, "")}`;
-}
+/**
+ * What the WhatsApp thread opens with. Generic on purpose: unlike the landing
+ * pages, this card closes every route, so it cannot name the plan or service
+ * the visitor came from.
+ */
+const CHAT_OPENER = `Hi ${siteConfig.name} — I'd like to talk about a project.`;
 
 /**
  * The dark card every marketing page closes on: studio wordmark and contact
@@ -51,7 +58,7 @@ export function CtaShell({
             <span className="block">{heading.trail}</span>
           </h2>
 
-          <div className="mt-9 flex flex-col gap-4 font-display text-lg text-white/85 sm:flex-row sm:items-center sm:gap-9 sm:text-xl lg:flex-col lg:items-start lg:gap-4">
+          <div className="mt-9 flex flex-col gap-4 font-display text-lg text-white/85 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-9 sm:gap-y-3 sm:text-xl lg:flex-col lg:items-start lg:gap-4">
             <a
               href={`mailto:${siteConfig.contactEmail}`}
               className="inline-flex items-center gap-3 transition-colors duration-300 hover:text-white"
@@ -61,11 +68,24 @@ export function CtaShell({
             </a>
 
             <a
-              href={telHref(siteConfig.contactPhone)}
+              href={telLink(siteConfig.contactPhone)}
               className="inline-flex items-center gap-3 transition-colors duration-300 hover:text-white"
             >
               <PhoneIcon className="h-[18px] w-[18px] shrink-0" />
               {siteConfig.contactPhone}
+            </a>
+
+            {/* Same line as the one above it, so the number is not printed
+                twice in one row — this entry is here for the channel, not the
+                digits. */}
+            <a
+              href={whatsappLink(siteConfig.whatsappNumber, CHAT_OPENER)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 transition-colors duration-300 hover:text-white"
+            >
+              <WhatsAppIcon className="h-[18px] w-[18px] shrink-0" />
+              WhatsApp
             </a>
           </div>
         </div>

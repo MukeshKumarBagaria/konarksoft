@@ -15,9 +15,9 @@ import type { LandingContent } from "@/types/content";
  */
 export const aiContentCreationContent: LandingContent = {
   meta: {
-    title: "AI Content Creation from ₹9,999/month",
+    title: "AI Content Creation",
     description:
-      "AI-assisted, human-edited content for brands that need to publish daily — social posts, reels, blogs and ad creative in your own brand voice. From ₹9,999 a month, no lock-in.",
+      "AI-assisted, human-edited content for brands that need to publish daily — social posts, reels, blogs and ad creative in your own brand voice. Monthly plans quoted to your volume, no lock-in.",
   },
   canonical: "/ai-content-creation",
 
@@ -28,13 +28,13 @@ export const aiContentCreationContent: LandingContent = {
       accent: "at ten times the pace",
     },
     subheadline:
-      "Social posts, reels, blogs and ad creative — drafted with AI trained on your own brand voice, then edited by a human before anything reaches you. From ₹9,999 a month, no lock-in.",
+      "Social posts, reels, blogs and ad creative — drafted with AI trained on your own brand voice, then edited by a human before anything reaches you. Quoted to your volume, no lock-in.",
     primaryCta: {
       label: "Get free sample content",
       message:
         "Hi Konark Soft, I saw your AI content page and I would like free sample content for my brand.",
     },
-    secondaryCta: { label: "See plans & pricing", href: "#pricing" },
+    secondaryCta: { label: "See what's included", href: "#pricing" },
     assurances: [
       "Human editor on every piece",
       "Your brand voice, not generic AI",
@@ -107,7 +107,6 @@ export const aiContentCreationContent: LandingContent = {
         name: "Starter",
         shortName: "Starter",
         audience: "Brands that need to show up consistently at last",
-        price: "₹9,999",
         priceNote: "Per month · GST extra",
         scope: "16 pieces / month",
         delivery: "Live in 7 days",
@@ -121,11 +120,6 @@ export const aiContentCreationContent: LandingContent = {
           "2 rounds of revisions per batch",
           "No lock-in — 30 days' notice, any time",
         ],
-        cta: {
-          label: "Start with Starter",
-          message:
-            "Hi Konark Soft, I am interested in the Starter content plan (₹9,999/month). Please share the details.",
-        },
         tone: "plain",
       },
       {
@@ -133,8 +127,6 @@ export const aiContentCreationContent: LandingContent = {
         name: "Growth",
         shortName: "Growth",
         audience: "Brands publishing daily and starting to rank",
-        price: "₹19,999",
-        compareAt: "₹27,999",
         priceNote: "Per month · GST extra",
         scope: "40 pieces / month",
         delivery: "Live in 7 days",
@@ -150,11 +142,6 @@ export const aiContentCreationContent: LandingContent = {
           "Monthly performance review with what to double down on",
           "Unlimited revisions within the month",
         ],
-        cta: {
-          label: "Start with Growth",
-          message:
-            "Hi Konark Soft, I am interested in the Growth content plan (₹19,999/month). Please share the details.",
-        },
         tone: "featured",
       },
       {
@@ -162,7 +149,6 @@ export const aiContentCreationContent: LandingContent = {
         name: "Authority",
         shortName: "Authority",
         audience: "Brands and founders building a category position",
-        price: "₹39,999",
         priceNote: "Per month · GST extra",
         scope: "90+ pieces / month",
         delivery: "Live in 7 days",
@@ -177,11 +163,6 @@ export const aiContentCreationContent: LandingContent = {
           "Dedicated content lead on WhatsApp",
           "Quarterly strategy session with your team",
         ],
-        cta: {
-          label: "Start with Authority",
-          message:
-            "Hi Konark Soft, I am interested in the Authority content plan (₹39,999/month). Please share the details.",
-        },
         tone: "plain",
       },
     ],
@@ -189,7 +170,7 @@ export const aiContentCreationContent: LandingContent = {
       eyebrow: "Option 4",
       title: { lead: "Volume or niche?", accent: "Tell us what you need" },
       description:
-        "Thousands of product descriptions, ad creative at test-and-scale volumes, technical writing that needs a subject expert, or content in Hindi, Odia, Bengali and Tamil alongside English. We scope it against your actual catalogue and quote once.",
+        "Thousands of product descriptions, ad creative at test-and-scale volumes, technical writing that needs a subject expert, or content in Hindi alongside English. We scope it against your actual catalogue and quote once.",
       capabilities: [
         "Product catalogues at scale",
         "Multilingual content",
@@ -199,11 +180,6 @@ export const aiContentCreationContent: LandingContent = {
         "In-house team training",
       ],
       priceNote: "Free sample first · no obligation",
-      cta: {
-        label: "Get a custom quote",
-        message:
-          "Hi Konark Soft, I need a custom content plan. Here is what I am looking for:",
-      },
     },
     footnote:
       "All prices are monthly and exclude GST. No lock-in: 30 days' notice ends it and every file, calendar and voice guide is handed over. You own the copyright to everything we produce, from the first piece.",
@@ -341,7 +317,7 @@ export const aiContentCreationContent: LandingContent = {
       {
         question: "Which languages do you write in?",
         answer:
-          "English by default. Hindi, Odia, Bengali and Tamil are available — these are written and edited by native speakers rather than machine-translated from the English, because translated marketing copy always reads translated.",
+          "English by default. Hindi is available too — written and edited by a native speaker rather than machine-translated from the English, because translated marketing copy always reads translated.",
       },
       {
         question: "How long is the contract?",
@@ -357,9 +333,9 @@ export const aiContentCreationContent: LandingContent = {
     description:
       "Fill this in and it opens WhatsApp with your details ready to send — we will write three sample pieces in your voice before you pay anything.",
     needs: [
-      "Starter — ₹9,999/month",
-      "Growth — ₹19,999/month",
-      "Authority — ₹39,999/month",
+      "Starter",
+      "Growth",
+      "Authority",
       "Blog and SEO content only",
       "Reels and video editing only",
       "Not sure yet — please advise",
@@ -373,14 +349,14 @@ export const aiContentCreationContent: LandingContent = {
         "Reply within 24 hours, every working day",
         "Three free sample pieces before you pay",
         "No lock-in, ever — 30 days' notice",
-        "English, Hindi, Odia, Bengali and Tamil",
+        "English and Hindi",
       ],
       callLabel: "Call us instead",
     },
   },
 
   sticky: {
-    headline: "Content from ₹9,999/mo",
+    headline: "Get a content quote",
     support: "Free samples first",
     cta: {
       label: "WhatsApp",

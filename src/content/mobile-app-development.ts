@@ -13,9 +13,9 @@ import type { LandingContent } from "@/types/content";
  */
 export const mobileAppDevelopmentContent: LandingContent = {
   meta: {
-    title: "Mobile App Development from ₹49,999",
+    title: "Mobile App Development",
     description:
-      "Flutter and React Native apps for Android and iOS from one codebase. Fixed scope, fixed price from ₹49,999, shipped to both stores with the code and accounts in your name.",
+      "Flutter and React Native apps for Android and iOS from one codebase. Fixed scope and a fixed quote, shipped to both stores with the code and accounts in your name.",
   },
   canonical: "/mobile-app-development",
 
@@ -26,13 +26,13 @@ export const mobileAppDevelopmentContent: LandingContent = {
       accent: "built to be kept",
     },
     subheadline:
-      "Flutter and React Native apps designed, built and shipped to both stores from a single codebase. Fixed scope, fixed price from ₹49,999 — and the code, the accounts and the keys end up in your name.",
+      "Flutter and React Native apps designed, built and shipped to both stores from a single codebase. Fixed scope, one fixed quote — and the code, the accounts and the keys end up in your name.",
     primaryCta: {
       label: "Get my free quote",
       message:
         "Hi Konark Soft, I saw your mobile app development page and I want a free quote for my app idea.",
     },
-    secondaryCta: { label: "See plans & pricing", href: "#pricing" },
+    secondaryCta: { label: "See what's included", href: "#pricing" },
     assurances: [
       "Android + iOS together",
       "Fixed scope, fixed price",
@@ -105,7 +105,6 @@ export const mobileAppDevelopmentContent: LandingContent = {
         name: "MVP App",
         shortName: "MVP",
         audience: "Founders validating an idea with real users",
-        price: "₹49,999",
         priceNote: "One-time · GST extra",
         scope: "Up to 8 screens",
         delivery: "4–6 weeks",
@@ -119,11 +118,6 @@ export const mobileAppDevelopmentContent: LandingContent = {
           "Analytics and crash reporting",
           "1 month of free fixes after launch",
         ],
-        cta: {
-          label: "Start with MVP",
-          message:
-            "Hi Konark Soft, I am interested in the MVP App plan (₹49,999). Please share the details.",
-        },
         tone: "plain",
       },
       {
@@ -131,8 +125,6 @@ export const mobileAppDevelopmentContent: LandingContent = {
         name: "Business App",
         shortName: "Business",
         audience: "Running businesses putting a real service in users' hands",
-        price: "₹99,999",
-        compareAt: "₹1,39,999",
         priceNote: "One-time · GST extra",
         scope: "Up to 20 screens",
         delivery: "8–10 weeks",
@@ -148,11 +140,6 @@ export const mobileAppDevelopmentContent: LandingContent = {
           "Offline handling for weak networks",
           "3 months of free support after launch",
         ],
-        cta: {
-          label: "Start with Business",
-          message:
-            "Hi Konark Soft, I am interested in the Business App plan (₹99,999). Please share the details.",
-        },
         tone: "featured",
       },
       {
@@ -160,7 +147,6 @@ export const mobileAppDevelopmentContent: LandingContent = {
         name: "Marketplace App",
         shortName: "Marketplace",
         audience: "Two-sided platforms with customers, partners and admins",
-        price: "₹1,99,999",
         priceNote: "One-time · GST extra",
         scope: "Multi-role platform",
         delivery: "12–16 weeks",
@@ -175,11 +161,6 @@ export const mobileAppDevelopmentContent: LandingContent = {
           "Load-tested before launch",
           "6 months of free support after launch",
         ],
-        cta: {
-          label: "Start a marketplace",
-          message:
-            "Hi Konark Soft, I am interested in the Marketplace App plan (₹1,99,999). Please share the details.",
-        },
         tone: "plain",
       },
     ],
@@ -197,14 +178,9 @@ export const mobileAppDevelopmentContent: LandingContent = {
         "Ongoing product team",
       ],
       priceNote: "Quoted in 24 hours · no obligation",
-      cta: {
-        label: "Get a custom quote",
-        message:
-          "Hi Konark Soft, I need a custom mobile app plan. Here is what my project involves:",
-      },
     },
     footnote:
-      "All prices are one-time and exclude GST. Store developer accounts cost ₹2,000 a year for Google Play and about ₹8,200 a year for Apple, paid directly and registered to you. Backend hosting is billed by your provider, in your own account.",
+      "Every build is quoted one-time and excludes GST. Store developer accounts cost ₹2,000 a year for Google Play and about ₹8,200 a year for Apple, paid directly and registered to you. Backend hosting is billed by your provider, in your own account.",
   },
 
   included: {
@@ -355,9 +331,9 @@ export const mobileAppDevelopmentContent: LandingContent = {
     description:
       "Fill this in and it opens WhatsApp with your details ready to send — no waiting on a form that disappears into an inbox.",
     needs: [
-      "MVP App — ₹49,999",
-      "Business App — ₹99,999",
-      "Marketplace App — ₹1,99,999",
+      "MVP App",
+      "Business App",
+      "Marketplace App",
       "Rescue an app someone else started",
       "Backend or API only",
       "Not sure yet — please advise",
@@ -371,14 +347,14 @@ export const mobileAppDevelopmentContent: LandingContent = {
         "Reply within 24 hours, every working day",
         "Free 30-minute scope call — no obligation",
         "A written scope and fixed quote before any payment",
-        "English, Hindi, Odia and Bengali",
+        "English and Hindi",
       ],
       callLabel: "Call us instead",
     },
   },
 
   sticky: {
-    headline: "Apps from ₹49,999",
+    headline: "Get an app quote",
     support: "Free scope call · 24 hrs",
     cta: {
       label: "WhatsApp",

@@ -10,16 +10,21 @@ export const siteConfig = {
   // Absolute URL is required for canonical links, sitemaps and Open Graph images.
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   locale: "en_US",
-  contactEmail: "hello@konarksoft.com",
-  /** Placeholder — swap in the studio's real line before launch. */
-  contactPhone: "+91 00000 00000",
+  contactEmail: "info@konarksoft.com",
   /**
-   * The line every WhatsApp call-to-action opens. Country code first, digits
-   * only — the format `wa.me` expects. Kept in the environment because the ad
-   * landing pages are useless pointed at the placeholder, and a wrong number
-   * there costs money per click.
+   * The studio line, shown wherever a number appears and dialled by every
+   * `tel:` link. Written the way a person reads it — `telLink` strips the
+   * spacing before it reaches the dialler.
    */
-  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "919000000000",
+  contactPhone: "+91 88242 97530",
+  /**
+   * The line every WhatsApp call-to-action opens — the same number as
+   * `contactPhone`, in the digits-only form `wa.me` expects: country code
+   * first, no `+`, spaces or dashes. Still overridable from the environment so
+   * a campaign can be pointed at a different line without a deploy; a wrong
+   * number here costs money per click on the ad landing pages.
+   */
+  whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "918824297530",
   /**
    * Shown in the footer bar. Placeholder handles: point each one at the real
    * profile before launch, or drop the entry to hide the link.

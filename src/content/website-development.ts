@@ -14,9 +14,9 @@ import type { LandingContent } from "@/types/content";
  */
 export const websiteDevelopmentContent: LandingContent = {
   meta: {
-    title: "Website Development from ₹4,999",
+    title: "Website Development",
     description:
-      "Get a fast, mobile-ready website for your business in as little as 7 days. Fixed one-time pricing from ₹4,999 — static, dynamic and e-commerce plans. Free quote on WhatsApp.",
+      "Get a fast, mobile-ready website for your business in as little as 7 days. Fixed one-time scope — static, dynamic and e-commerce plans. Free written quote on WhatsApp.",
   },
   canonical: "/website-development",
 
@@ -27,13 +27,13 @@ export const websiteDevelopmentContent: LandingContent = {
       accent: "real enquiries",
     },
     subheadline:
-      "Designed, built and launched in as little as 7 days. Fixed one-time price from ₹4,999 — no monthly fees, no lock-in, and the domain, hosting and code stay in your name.",
+      "Designed, built and launched in as little as 7 days. One fixed quote, written before we start — no monthly fees, no lock-in, and the domain, hosting and code stay in your name.",
     primaryCta: {
       label: "Get my free quote",
       message:
         "Hi Konark Soft, I saw your website development page and I want a free quote for my business.",
     },
-    secondaryCta: { label: "See plans & pricing", href: "#pricing" },
+    secondaryCta: { label: "See what's included", href: "#pricing" },
     assurances: [
       "Delivery from 7 days",
       "One-time payment",
@@ -106,7 +106,6 @@ export const websiteDevelopmentContent: LandingContent = {
         name: "Starter Website",
         shortName: "Static",
         audience: "New businesses, freelancers and local shops",
-        price: "₹4,999",
         priceNote: "One-time · GST extra",
         scope: "Up to 5 pages",
         delivery: "Live in 7 days",
@@ -120,11 +119,6 @@ export const websiteDevelopmentContent: LandingContent = {
           "Free SSL certificate (the padlock)",
           "1 month of free changes after launch",
         ],
-        cta: {
-          label: "Start with Starter",
-          message:
-            "Hi Konark Soft, I am interested in the Starter Website plan (₹4,999). Please share the details.",
-        },
         tone: "plain",
       },
       {
@@ -132,15 +126,13 @@ export const websiteDevelopmentContent: LandingContent = {
         name: "Business Website",
         shortName: "Dynamic",
         audience: "Growing businesses that update their own content",
-        price: "₹7,999",
-        compareAt: "₹12,999",
         priceNote: "One-time · GST extra",
-        scope: "Up to 10 pages",
+        scope: "Up to 5 pages",
         delivery: "Live in 10–12 days",
         flag: "Most popular",
         features: [
           "Everything in Starter, plus:",
-          "10-page dynamic website with an admin panel",
+          "5-page dynamic website with an admin panel",
           "Edit text, images and prices yourself — no developer needed",
           "Blog or news section, ready for SEO",
           "Photo and video gallery",
@@ -149,11 +141,6 @@ export const websiteDevelopmentContent: LandingContent = {
           "Speed-tuned for Google's Core Web Vitals",
           "3 months of free support after launch",
         ],
-        cta: {
-          label: "Start with Business",
-          message:
-            "Hi Konark Soft, I am interested in the Business Website plan (₹7,999). Please share the details.",
-        },
         tone: "featured",
       },
       {
@@ -161,7 +148,6 @@ export const websiteDevelopmentContent: LandingContent = {
         name: "E-commerce Store",
         shortName: "E-commerce",
         audience: "Brands ready to sell online and ship nationwide",
-        price: "₹19,999",
         priceNote: "One-time · GST extra",
         scope: "Unlimited products",
         delivery: "Live in 20–25 days",
@@ -176,11 +162,6 @@ export const websiteDevelopmentContent: LandingContent = {
           "GST invoices generated automatically",
           "6 months of free support after launch",
         ],
-        cta: {
-          label: "Start selling online",
-          message:
-            "Hi Konark Soft, I am interested in the E-commerce Store plan (₹19,999). Please share the details.",
-        },
         tone: "plain",
       },
     ],
@@ -198,14 +179,9 @@ export const websiteDevelopmentContent: LandingContent = {
         "Redesign of an existing site",
       ],
       priceNote: "Quoted in 24 hours · no obligation",
-      cta: {
-        label: "Get a custom quote",
-        message:
-          "Hi Konark Soft, I need a custom plan. Here is what my project involves:",
-      },
     },
     footnote:
-      "All prices are one-time and exclude GST. Domain and hosting renew yearly (roughly ₹1,500–₹3,000), paid directly to the provider in your own name. Anything outside the agreed scope is quoted before we start it — never billed after.",
+      "Every project is quoted one-time and excludes GST. Domain and hosting renew yearly (roughly ₹1,500–₹3,000), paid directly to the provider in your own name. Anything outside the agreed scope is quoted before we start it — never billed after.",
   },
 
   included: {
@@ -295,7 +271,7 @@ export const websiteDevelopmentContent: LandingContent = {
       },
       {
         quote:
-          "Quoted ₹19,999, delivered for ₹19,999, on the day they said. After two developers who ghosted us, that alone was worth it. First online order came in on day three.",
+          "Quoted one fixed number, delivered for exactly that, on the day they said. After two developers who ghosted us, that alone was worth it. First online order came in on day three.",
         name: "Arjun Sharma",
         role: "Vasant Handlooms, Jaipur",
       },
@@ -307,9 +283,9 @@ export const websiteDevelopmentContent: LandingContent = {
     description: "If yours is not here, ask it on WhatsApp — we reply the same day.",
     items: [
       {
-        question: "Is ₹4,999 really the final price?",
+        question: "Is the quote really the final price?",
         answer:
-          "Yes, for everything listed in the Starter plan. It is one-time and GST is extra. If you later want something outside that scope, we quote it and you approve it before we build it. Nothing is ever added to a bill after the fact.",
+          "Yes, for everything listed in the plan you pick. It is one-time and GST is extra. If you later want something outside that scope, we quote it and you approve it before we build it. Nothing is ever added to a bill after the fact.",
       },
       {
         question: "Do I have to pay you every month?",
@@ -355,9 +331,9 @@ export const websiteDevelopmentContent: LandingContent = {
     description:
       "Fill this in and it opens WhatsApp with your details ready to send — no waiting on a form that disappears into an inbox.",
     needs: [
-      "Starter Website — ₹4,999",
-      "Business Website — ₹7,999",
-      "E-commerce Store — ₹19,999",
+      "Starter Website",
+      "Business Website",
+      "E-commerce Store",
       "Mobile app (Android / iOS)",
       "Redesign of my existing website",
       "Not sure yet — please advise",
@@ -371,14 +347,14 @@ export const websiteDevelopmentContent: LandingContent = {
         "Reply within 24 hours, every working day",
         "Free consultation — no obligation to book",
         "A fixed written quote before any payment",
-        "English, Hindi, Odia and Bengali",
+        "English and Hindi",
       ],
       callLabel: "Call us instead",
     },
   },
 
   sticky: {
-    headline: "Website from ₹4,999",
+    headline: "Get a website quote",
     support: "Free quote in 24 hrs",
     cta: {
       label: "WhatsApp",

@@ -17,7 +17,7 @@ export const sitePages: readonly NavLink[] = [
   {
     label: "Pricing",
     href: "/pricing",
-    description: "Simple monthly subscriptions",
+    description: "How we scope and quote",
   },
   { label: "Contact", href: "/contact", description: "Start a conversation" },
 ];
@@ -35,22 +35,22 @@ export const landingPages: readonly NavLink[] = [
   {
     label: "Website Development",
     href: "/website-development",
-    description: "Fixed-price websites from ₹4,999",
+    description: "Fixed-scope websites, quoted upfront",
   },
   {
     label: "Mobile App Development",
     href: "/mobile-app-development",
-    description: "Android & iOS apps from ₹49,999",
+    description: "Android & iOS from one codebase",
   },
   {
     label: "Meta & Google Ads",
     href: "/meta-google-ads",
-    description: "Meta & Google from ₹14,999/month",
+    description: "Campaigns built, run and reported",
   },
   {
     label: "AI Content Creation",
     href: "/ai-content-creation",
-    description: "Brand-voice content from ₹9,999/month",
+    description: "Brand-voice content, published daily",
   },
 ];
 

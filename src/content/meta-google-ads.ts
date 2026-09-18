@@ -15,9 +15,9 @@ import type { LandingContent } from "@/types/content";
  */
 export const metaGoogleAdsContent: LandingContent = {
   meta: {
-    title: "Meta & Google Ads Management from ₹14,999/month",
+    title: "Meta & Google Ads Management",
     description:
-      "Meta and Google campaigns built, run and reported by a team that optimises for enquiries and sales, not impressions. From ₹14,999 a month, no lock-in, you own the ad accounts.",
+      "Meta and Google campaigns built, run and reported by a team that optimises for enquiries and sales, not impressions. Monthly retainer quoted to your scope, no lock-in, you own the ad accounts.",
   },
   canonical: "/meta-google-ads",
 
@@ -28,13 +28,13 @@ export const metaGoogleAdsContent: LandingContent = {
       accent: "not just clicks",
     },
     subheadline:
-      "Meta and Google campaigns built, run and reported by people who are measured on enquiries and sales. From ₹14,999 a month, no lock-in, and the ad accounts stay in your name.",
+      "Meta and Google campaigns built, run and reported by people who are measured on enquiries and sales. A monthly retainer quoted to your scope, no lock-in, and the ad accounts stay in your name.",
     primaryCta: {
       label: "Get a free account audit",
       message:
         "Hi Konark Soft, I saw your ads management page and I would like a free audit of my ad account.",
     },
-    secondaryCta: { label: "See plans & pricing", href: "#pricing" },
+    secondaryCta: { label: "See what's included", href: "#pricing" },
     assurances: [
       "No lock-in contract",
       "You own the ad accounts",
@@ -108,7 +108,6 @@ export const metaGoogleAdsContent: LandingContent = {
         name: "Starter",
         shortName: "Starter",
         audience: "One platform, one clear offer, getting off the ground",
-        price: "₹14,999",
         priceNote: "Per month · ad spend extra · GST extra",
         scope: "Meta or Google",
         delivery: "Live in 5 days",
@@ -122,11 +121,6 @@ export const metaGoogleAdsContent: LandingContent = {
           "Fortnightly optimisation and a monthly report",
           "No lock-in — 30 days' notice, any time",
         ],
-        cta: {
-          label: "Start with Starter",
-          message:
-            "Hi Konark Soft, I am interested in the Starter ads plan (₹14,999/month). Please share the details.",
-        },
         tone: "plain",
       },
       {
@@ -134,8 +128,6 @@ export const metaGoogleAdsContent: LandingContent = {
         name: "Growth",
         shortName: "Growth",
         audience: "Businesses that need both platforms pulling together",
-        price: "₹24,999",
-        compareAt: "₹34,999",
         priceNote: "Per month · ad spend extra · GST extra",
         scope: "Meta + Google",
         delivery: "Live in 5 days",
@@ -151,11 +143,6 @@ export const metaGoogleAdsContent: LandingContent = {
           "Weekly optimisation and a weekly call",
           "Leads pushed straight into your CRM",
         ],
-        cta: {
-          label: "Start with Growth",
-          message:
-            "Hi Konark Soft, I am interested in the Growth ads plan (₹24,999/month). Please share the details.",
-        },
         tone: "featured",
       },
       {
@@ -163,7 +150,6 @@ export const metaGoogleAdsContent: LandingContent = {
         name: "Scale",
         shortName: "Scale",
         audience: "Spending seriously and answering to a board or a P&L",
-        price: "₹49,999",
         priceNote: "Per month · ad spend extra · GST extra",
         scope: "Full funnel",
         delivery: "Live in 5 days",
@@ -178,11 +164,6 @@ export const metaGoogleAdsContent: LandingContent = {
           "Cohort and lifetime-value reporting, not just ROAS",
           "Quarterly strategy session with your team",
         ],
-        cta: {
-          label: "Start with Scale",
-          message:
-            "Hi Konark Soft, I am interested in the Scale ads plan (₹49,999/month). Please share the details.",
-        },
         tone: "plain",
       },
     ],
@@ -200,11 +181,6 @@ export const metaGoogleAdsContent: LandingContent = {
         "In-house team training",
       ],
       priceNote: "Free audit first · no obligation",
-      cta: {
-        label: "Get a custom quote",
-        message:
-          "Hi Konark Soft, I need a custom ads plan. Here is my situation:",
-      },
     },
     footnote:
       "Management fee only — your ad spend is paid by you, directly to Meta and Google, from accounts registered to your business. We take no percentage of spend and never hold your budget. No lock-in: 30 days' notice ends it, and the accounts, campaigns and data stay yours.",
@@ -358,9 +334,9 @@ export const metaGoogleAdsContent: LandingContent = {
     description:
       "Fill this in and it opens WhatsApp with your details ready to send — no waiting on a form that disappears into an inbox.",
     needs: [
-      "Starter — ₹14,999/month",
-      "Growth — ₹24,999/month",
-      "Scale — ₹49,999/month",
+      "Starter",
+      "Growth",
+      "Scale",
       "Audit my existing ad account",
       "Recover a disabled account",
       "Not sure yet — please advise",
@@ -374,14 +350,14 @@ export const metaGoogleAdsContent: LandingContent = {
         "Reply within 24 hours, every working day",
         "Free account audit — yours to keep either way",
         "No lock-in, ever — 30 days' notice",
-        "English, Hindi, Odia and Bengali",
+        "English and Hindi",
       ],
       callLabel: "Call us instead",
     },
   },
 
   sticky: {
-    headline: "Ads from ₹14,999/mo",
+    headline: "Get an ads quote",
     support: "Free account audit",
     cta: {
       label: "WhatsApp",

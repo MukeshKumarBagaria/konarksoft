@@ -9,8 +9,7 @@ import type { LandingContent, LandingPlan } from "@/types/content";
  *
  * The price rail is the unusual part — most agencies hide the number until a
  * form has been filled in, and hiding it is exactly what makes ad traffic
- * bounce. Naming it here loses the people who were never going to pay it, which
- * is the point. It is set as three figures on a divided rail rather than three
+ * bounce. The tiers are named here on a divided rail rather than in three
  * boxes: the same information, without three more outlines on the page.
  *
  * The top padding clears the site's fixed header pill.
@@ -80,19 +79,19 @@ export function LandingHero({
           ))}
         </ul>
 
-        {/* Divided rather than boxed: the figures come from the same plans
-            rendered further down, so the two can never disagree. */}
-        {/* Opaque rather than tinted-and-blurred: a `backdrop-filter` here has
+        {/* Was three prices on a divided rail. With no figures to show it is
+            the tier names alone — still a preview of what the page offers, and
+            still sourced from the same plans rendered further down, so the two
+            can never disagree.
+
+            Opaque rather than tinted-and-blurred: a `backdrop-filter` here has
             nothing to reveal over a near-white field, and stacking one over the
             grid's masked layer is exactly the combination that rasterises badly
             on some mobile GPUs. */}
         <ul className="mx-auto mt-10 flex max-w-lg divide-x divide-hairline rounded-2xl bg-white py-4 shadow-[inset_0_0_0_1px_var(--color-hairline)]">
           {plans.map((plan) => (
             <li key={plan.id} className="flex-1 px-2">
-              <span className="block text-[18px] font-bold tracking-[-0.02em] text-ink sm:text-xl">
-                {plan.price}
-              </span>
-              <span className="mt-0.5 block text-[12.5px] leading-snug text-muted sm:text-[13px]">
+              <span className="block text-[15px] font-bold tracking-[-0.02em] text-ink sm:text-base">
                 {plan.shortName}
               </span>
             </li>

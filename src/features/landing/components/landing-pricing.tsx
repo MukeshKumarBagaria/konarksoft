@@ -1,5 +1,7 @@
+import Link from "next/link";
+
+import { buttonStyles } from "@/components/ui/button";
 import { CheckIcon } from "@/components/ui/icons";
-import { ChatCta } from "@/features/landing/components/chat-cta";
 import { SectionHeading } from "@/features/landing/components/section-heading";
 import { cn } from "@/lib/utils/cn";
 import type { LandingContent, LandingPlan } from "@/types/content";
@@ -9,9 +11,9 @@ import type { LandingContent, LandingPlan } from "@/types/content";
  * white body — the split gave every card two edges, two radii and a seam, and
  * three of those side by side is most of what made this section look busy.
  *
- * The button sits directly under the price rather than at the foot of the
+ * The button sits directly under the tier name rather than at the foot of the
  * feature list: on a phone the list runs most of a screen, and anyone already
- * sold at the number should not have to scroll past eight reasons to find out
+ * sold on the tier should not have to scroll past eight reasons to find out
  * where to press.
  */
 function PlanCard({ plan }: { plan: LandingPlan }) {
@@ -59,30 +61,11 @@ function PlanCard({ plan }: { plan: LandingPlan }) {
         {plan.audience}
       </p>
 
-      <p className="mt-4 flex flex-wrap items-baseline gap-x-2.5">
-        <span
-          className={cn(
-            "text-[2.5rem] leading-none font-bold tracking-[-0.035em]",
-            featured ? "text-white" : "text-ink",
-          )}
-        >
-          {plan.price}
-        </span>
-        {plan.compareAt ? (
-          <span
-            className={cn(
-              "text-lg line-through",
-              featured ? "text-white/45" : "text-subtle",
-            )}
-          >
-            {plan.compareAt}
-          </span>
-        ) : null}
-      </p>
-
+      {/* No figure here by design — the tier is described, and the number is
+          agreed on the call. `priceNote` carries the billing basis only. */}
       <p
         className={cn(
-          "mt-2 text-[13.5px]",
+          "mt-4 text-[13.5px]",
           featured ? "text-white/60" : "text-subtle",
         )}
       >
@@ -105,12 +88,20 @@ function PlanCard({ plan }: { plan: LandingPlan }) {
         ))}
       </ul>
 
-      <ChatCta
-        action={plan.cta}
-        variant={featured ? "brand" : "primary"}
-        size="lg"
-        className="mt-5 w-full"
-      />
+      {/* Goes to the contact form rather than WhatsApp: with no figure on the
+          card, the next step is a written quote, and that needs the scope the
+          form collects. The WhatsApp route is still one tap away in the sticky
+          bar and the form's own aside. */}
+      <Link
+        href="/contact"
+        className={buttonStyles({
+          variant: featured ? "brand" : "primary",
+          size: "lg",
+          className: "mt-5 w-full",
+        })}
+      >
+        Get Pricing Quote
+      </Link>
 
       <div
         className={cn(
@@ -204,7 +195,16 @@ export function LandingPricing({
           </div>
 
           <div className="mt-8 shrink-0 lg:mt-0 lg:text-center">
-            <ChatCta action={custom.cta} className="w-full lg:w-auto" />
+            <Link
+              href="/contact"
+              className={buttonStyles({
+                variant: "brand",
+                size: "xl",
+                className: "w-full lg:w-auto",
+              })}
+            >
+              Get Pricing Quote
+            </Link>
             <p className="mt-3 text-center text-[13.5px] text-subtle">
               {custom.priceNote}
             </p>

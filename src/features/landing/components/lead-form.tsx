@@ -13,15 +13,17 @@ type FieldName = "name" | "phone" | "need";
 type Errors = Partial<Record<FieldName, string>>;
 
 /**
- * The form does not post anywhere. It assembles what was typed into a WhatsApp
- * message and hands the visitor off to their own app with it already written.
+ * The form's first job is the handoff: it assembles what was typed into a
+ * WhatsApp message and opens the visitor's own app with it already written.
+ * That is where this market replies, and the lead arrives in the studio's
+ * pocket with the plan it came from on the first line.
  *
- * That is a deliberate trade. A posted form needs an inbox someone watches, and
- * an enquiry that sits unread for a day is worth nothing; a WhatsApp thread is
- * where this market already replies, and the lead arrives in the studio's
- * pocket with the plan it came from on the first line. The cost is that it
- * needs JavaScript — so the aside beside it carries a plain link and a phone
- * number, both of which work with none.
+ * It also posts the same fields to `/api/lead`, which mails them on. The two
+ * are not alternatives — plenty of people open WhatsApp and never press send,
+ * and that lead is only recoverable if it was captured on the way past.
+ *
+ * It needs JavaScript either way, so the aside beside it carries a plain link
+ * and a phone number, both of which work with none.
  */
 export function LeadForm({ content }: { content: LandingContent["form"] }) {
   const fieldId = useId();
@@ -75,8 +77,30 @@ export function LeadForm({ content }: { content: LandingContent["form"] }) {
       .join("\n");
 
     const href = chatHrefFor(message);
-    // Popup blockers allow this because it runs inside the submit gesture; the
-    // fallback covers the browsers that still refuse.
+
+    // Fire-and-forget, and deliberately not awaited: the visitor is about to be
+    // handed to another app, and making them wait on our inbox — or showing
+    // them an error from it — would cost the handoff that actually converts.
+    // `keepalive` is what lets the request finish after the tab is gone.
+    void fetch("/api/lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({
+        name,
+        phone,
+        need,
+        business,
+        details,
+        // Which of the ad pages this came from, so the inbox can tell them
+        // apart without the copy having to name itself.
+        source: window.location.pathname,
+      }),
+    }).catch(() => {});
+
+    // Still inside the submit gesture — the fetch above does not yield, so the
+    // user activation that lets this through popup blockers is intact. The
+    // fallback covers the browsers that refuse anyway.
     const opened = window.open(href, "_blank", "noopener,noreferrer");
     if (!opened) window.location.href = href;
   }

@@ -57,14 +57,26 @@ export type PricingTone = "ember" | "frost";
 /** A button under a plan. The first in a plan's list renders as the primary. */
 export type PricingAction = { label: string; href: Route };
 
+/**
+ * A plan card. It carries no figures: the site quotes to the scope rather than
+ * publishing a rate, so every card ends at the same "Get Pricing Quote" button
+ * and the number is agreed on the call.
+ */
 export type PricingPlan = {
   /** Who the plan is for, e.g. "For Team or Start-up". Names the card. */
   audience: string;
   /** Pill in the header's top corner. Omit when the plan carries no flag. */
   flag?: string;
-  price: string;
-  /** Billing basis shown beside the price, set in the display serif. */
-  period: string;
+  /** One line on how the work is scoped and billed. No amounts. */
+  priceNote?: string;
+  /**
+   * The bonus stack — what tips a visitor who likes the scope. Listed
+   * separately from `features` because these are framed as things thrown in,
+   * and the card paints them that way.
+   */
+  bonuses?: { title: string; items: readonly string[] };
+  /** One-line risk reversal, pinned just above the actions. */
+  guarantee?: string;
   /** Serif lead-in above the feature list. */
   includes: string;
   features: readonly string[];
@@ -222,14 +234,11 @@ export type LandingPlan = {
   /** Slugs the card's heading so its feature list can be labelled by it. */
   id: string;
   name: string;
-  /** One word for the hero's price chips, where the full name will not fit. */
+  /** One word for the tier chips, where the full name will not fit. */
   shortName: string;
   /** One line naming who the tier is for. */
   audience: string;
-  price: string;
-  /** Struck-through anchor beside the price. Omit where there is none. */
-  compareAt?: string;
-  /** Small print under the price — payment basis, taxes. */
+  /** Small print under the tier name — billing basis, taxes. No amounts. */
   priceNote: string;
   /**
    * Scope and turnaround, shown as two chips above the feature list. Keep both
@@ -240,13 +249,12 @@ export type LandingPlan = {
   scope: string;
   delivery: string;
   features: readonly string[];
-  cta: WhatsAppAction;
   /** Pill in the card's top corner. Only the recommended plan carries one. */
   flag?: string;
   tone: LandingPlanTone;
 };
 
-/** The fourth option: no fixed price, quoted from a conversation. */
+/** The fourth option: anything outside the tiers, scoped from a conversation. */
 export type LandingCustomPlan = {
   eyebrow: string;
   title: { lead: string; accent: string };
@@ -254,7 +262,6 @@ export type LandingCustomPlan = {
   /** The kinds of work this route covers, listed as pills. */
   capabilities: readonly string[];
   priceNote: string;
-  cta: WhatsAppAction;
 };
 
 /** A two-run heading; `accent` is the half set in the display serif. */
