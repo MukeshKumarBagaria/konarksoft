@@ -17,7 +17,12 @@ export type HeroCard = {
 };
 
 export type HeroContent = {
-  badge: string;
+  /**
+   * Lines the hero pill cycles through, in order. One entry renders a static
+   * badge. Each has to stand alone — a visitor sees whichever one happens to
+   * be up when they land, so none of them may depend on the line before it.
+   */
+  badges: readonly string[];
   headline: string;
   /** Second headline line, set in the display serif. */
   accent: { lead: string; highlight: string };
@@ -31,13 +36,7 @@ export type HeroContent = {
  * One tone per project in the portfolio, so no two cards in a row share a wash.
  */
 export type WorkTone =
-  | "lime"
-  | "violet"
-  | "amber"
-  | "sky"
-  | "rose"
-  | "teal"
-  | "indigo";
+  "lime" | "violet" | "amber" | "sky" | "rose" | "teal" | "indigo";
 
 export type WorkItem = {
   title: string;
@@ -46,10 +45,14 @@ export type WorkItem = {
   tone: WorkTone;
   /** The case study this card opens, as a segment under `/work`. */
   slug: string;
-  /** Set over the card's artwork panel, in place of a screenshot. */
+  /** Set over the card's artwork panel, behind the site preview. */
   wordmark: string;
+  /** The live site, loaded into the card's preview panel. */
+  url: string;
   /** The client's live domain, shown in the panel's address bar. */
   displayUrl: string;
+  /** Whether the live site permits framing. See `CaseStudy.embeddable`. */
+  embeddable: boolean;
 };
 
 export type RecentWorkContent = {
@@ -65,6 +68,31 @@ export type CtaBannerContent = {
   };
   description: string;
   cta: { label: string; href: Route };
+};
+
+/**
+ * The homepage's closing block: what happens after someone gets in touch.
+ *
+ * It replaced the plan cards on the homepage for a reason worth keeping in
+ * mind when editing it — a visitor who has just met the studio is deciding
+ * whether to start a conversation, not which package to buy, and the plans
+ * still live on `/pricing` for the visitor who is. So every field here is
+ * short by design: three steps, a row of assurances, one action.
+ */
+export type NextStepsContent = {
+  eyebrow: string;
+  /** `trail` and `accent` share the second line; `accent` takes the gradient. */
+  heading: { lead: string; trail: string; accent: string };
+  description: string;
+  /** Kept to three. A fourth step reads as a process, which is what scares people off. */
+  steps: readonly { index: string; title: string; description: string }[];
+  /** The short reassurances under the steps, each a few words at most. */
+  assurances: readonly string[];
+  cta: { label: string; href: Route };
+  /** Opens WhatsApp with the message typed; the number comes from `siteConfig`. */
+  chat: WhatsAppAction;
+  /** One quiet line under the buttons. */
+  note: string;
 };
 
 /** Which of the two paint jobs a plan card wears. */
@@ -401,6 +429,16 @@ export type CaseStudy = {
   url: string;
   /** `url` without protocol or trailing slash — what the link shows. */
   displayUrl: string;
+  /**
+   * Whether the live site can be framed, i.e. whether it withholds both
+   * `X-Frame-Options` and a `frame-ancestors` directive. A site that sends
+   * either one is refused by the browser and paints nothing, so its preview
+   * panel stops at the captured screenshot instead of loading the real page.
+   *
+   * Verify before setting it, with:
+   * `curl -sSLD - -o /dev/null <url> | grep -iE 'x-frame-options|frame-ancestors'`
+   */
+  embeddable: boolean;
   /** Painted from the shared work palette. Cards and hero share the tone. */
   tone: WorkTone;
   /**

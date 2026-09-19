@@ -2,12 +2,11 @@ import type { Metadata } from "next";
 
 import { siteConfig } from "@/config/site";
 import { ctaBannerContent } from "@/content/cta";
-import { heroContent, homeMeta } from "@/content/home";
-import { pricingPlansContent } from "@/content/pricing";
+import { heroContent, homeMeta, nextStepsContent } from "@/content/home";
 import { recentWorkContent } from "@/content/work";
 import { CtaBanner } from "@/features/marketing/components/cta-banner";
 import { Hero } from "@/features/marketing/components/hero";
-import { PricingPlans } from "@/features/marketing/components/pricing-plans";
+import { NextSteps } from "@/features/marketing/components/next-steps";
 import { RecentWork } from "@/features/marketing/components/recent-work";
 
 /**
@@ -101,7 +100,7 @@ export default function HomePage() {
       <Hero content={heroContent} />
       <CtaBanner content={ctaBannerContent} />
       <RecentWork content={recentWorkContent} />
-      <PricingPlans content={pricingPlansContent} />
+      <NextSteps content={nextStepsContent} />
     </>
   );
 }

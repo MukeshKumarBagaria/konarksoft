@@ -113,7 +113,10 @@ function WorkCard({
       <ProjectArtwork
         tone={item.tone}
         wordmark={item.wordmark}
+        slug={item.slug}
+        url={item.url}
         displayUrl={item.displayUrl}
+        embeddable={item.embeddable}
         className="mt-5 aspect-[16/10] rounded-[1.25rem]"
       />
     </article>

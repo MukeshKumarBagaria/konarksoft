@@ -7,6 +7,7 @@ import { useEffect, useRef } from "react";
 import { buttonStyles } from "@/components/ui/button";
 import { CoinIcon } from "@/components/ui/icons";
 import { UnderlineStroke } from "@/components/ui/underline-stroke";
+import { HeroBadge } from "@/features/marketing/components/hero-badge";
 import { HeroCards } from "@/features/marketing/components/hero-cards";
 import type { HeroContent } from "@/types/content";
 
@@ -50,16 +51,7 @@ export function Hero({ content }: { content: HeroContent }) {
       />
 
       <div className="relative mx-auto flex max-w-5xl flex-col items-center px-5 pt-32 text-center sm:pt-40 lg:pt-48">
-        <p
-          data-reveal
-          className="inline-flex items-center gap-2 rounded-full bg-white/85 px-4 py-2 text-sm font-medium text-ink shadow-pill backdrop-blur-sm"
-        >
-          <span
-            aria-hidden="true"
-            className="h-1.5 w-1.5 rounded-full bg-brand"
-          />
-          {content.badge}
-        </p>
+        <HeroBadge items={content.badges} />
 
         <h1
           id="hero-heading"
@@ -84,12 +76,14 @@ export function Hero({ content }: { content: HeroContent }) {
         </p>
 
         <div data-reveal className="mt-9">
-          <Link href={content.cta.href} className={buttonStyles({ size: "lg" })}>
+          <Link
+            href={content.cta.href}
+            className={buttonStyles({ size: "lg" })}
+          >
             <CoinIcon className="h-[18px] w-[18px]" />
             {content.cta.label}
           </Link>
         </div>
-
       </div>
 
       {/* Wider than the copy above it, and shorter than the cards it holds:

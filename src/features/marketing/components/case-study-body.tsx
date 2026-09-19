@@ -331,7 +331,10 @@ export function CaseStudyNext({ next }: { next: CaseStudy }) {
         <ProjectArtwork
           tone={next.tone}
           wordmark={next.wordmark}
+          slug={next.slug}
+          url={next.url}
           displayUrl={next.displayUrl}
+          embeddable={next.embeddable}
           className="aspect-[16/10] rounded-[1.25rem]"
         />
       </article>

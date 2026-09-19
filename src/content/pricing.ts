@@ -103,7 +103,7 @@ export const pricingPlansContent: PricingPlansContent = {
     },
     points: [
       "No cost, no commitment",
-      "A fixed written quote within 24 hours",
+      "A fixed written quote within 1 hour",
       "We speak English and Hindi",
     ],
     cta: { label: "Book a Call", href: "/contact" },

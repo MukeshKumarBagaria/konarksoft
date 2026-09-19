@@ -70,7 +70,10 @@ function ProjectCard({ project }: { project: CaseStudy }) {
         <ProjectArtwork
           tone={project.tone}
           wordmark={project.wordmark}
+          slug={project.slug}
+          url={project.url}
           displayUrl={project.displayUrl}
+          embeddable={project.embeddable}
           className="aspect-[16/10] rounded-[1.25rem]"
         />
       </div>

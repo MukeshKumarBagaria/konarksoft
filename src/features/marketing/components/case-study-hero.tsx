@@ -90,7 +90,10 @@ export function CaseStudyHero({ study }: { study: CaseStudy }) {
           <ProjectArtwork
             tone={study.tone}
             wordmark={study.wordmark}
+            slug={study.slug}
+            url={study.url}
             displayUrl={study.displayUrl}
+            embeddable={study.embeddable}
             size="lg"
             className="aspect-[16/11] rounded-[1.75rem] shadow-float ring-1 ring-black/5"
           />

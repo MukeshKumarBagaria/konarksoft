@@ -19,6 +19,8 @@ export const recentWorkContent: RecentWorkContent = {
     tone: study.tone,
     slug: study.slug,
     wordmark: study.wordmark,
+    url: study.url,
     displayUrl: study.displayUrl,
+    embeddable: study.embeddable,
   })),
 };
