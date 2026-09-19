@@ -6,14 +6,14 @@ Router, TypeScript and Tailwind CSS v4.
 
 ## Tech stack
 
-| Concern        | Choice                                          |
-| -------------- | ----------------------------------------------- |
-| Framework      | Next.js 16 (App Router, Turbopack, typed routes) |
-| Language       | TypeScript (strict)                             |
-| Styling        | Tailwind CSS v4 with design tokens in `@theme`   |
-| Fonts          | `next/font` — Plus Jakarta Sans, Playfair Display |
-| Smooth scroll  | Lenis, behind a provider in `components/providers` |
-| Animation      | GSAP for entrance reveals, CSS for state changes |
+| Concern       | Choice                                             |
+| ------------- | -------------------------------------------------- |
+| Framework     | Next.js 16 (App Router, Turbopack, typed routes)   |
+| Language      | TypeScript (strict)                                |
+| Styling       | Tailwind CSS v4 with design tokens in `@theme`     |
+| Fonts         | `next/font` — Plus Jakarta Sans, Playfair Display  |
+| Smooth scroll | Lenis, behind a provider in `components/providers` |
+| Animation     | GSAP for entrance reveals, CSS for state changes   |
 
 ## Getting started
 
@@ -35,12 +35,37 @@ npm run typecheck  # tsc --noEmit
 
 ## Environment variables
 
-| Variable               | Required | Purpose                                                     |
-| ---------------------- | -------- | ----------------------------------------------------------- |
-| `NEXT_PUBLIC_SITE_URL` | Optional | Absolute URL for canonical tags, Open Graph, sitemap, robots. Defaults to `http://localhost:3000`. |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | **Before running ads** | The line every WhatsApp CTA on the landing pages opens. Country code first, digits only (e.g. `919876543210`). Defaults to the placeholder `919000000000`. |
+| Variable                            | Required                    | Purpose                                                                                                                                                    |
+| ----------------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SITE_URL`              | Optional                    | Absolute URL for canonical tags, Open Graph, sitemap, robots. Defaults to `http://localhost:3000`.                                                         |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER`       | **Before running ads**      | The line every WhatsApp CTA on the landing pages opens. Country code first, digits only (e.g. `919876543210`). Defaults to the placeholder `919000000000`. |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID`     | Optional                    | GA4 property, e.g. `G-XXXXXXXXXX`. Each lead is reported as `generate_lead`.                                                                               |
+| `NEXT_PUBLIC_GOOGLE_ADS_ID`         | **To count ad conversions** | Google Ads account, e.g. `AW-123456789`.                                                                                                                   |
+| `NEXT_PUBLIC_GOOGLE_ADS_LEAD_LABEL` | **To count ad conversions** | The conversion action's label, from Tools → Conversions → tag setup. Ads needs this _and_ the id above; either alone records nothing.                      |
+| `NEXT_PUBLIC_META_PIXEL_ID`         | Optional                    | Meta pixel from Events Manager. Fires the standard `Lead` event.                                                                                           |
 
-Set both to real values in production. See `.env.example`.
+Set the first two to real values in production. See `.env.example`.
+
+Every measurement id is optional: with all four unset the site loads no
+third-party script at all, and `/thank-you` simply thanks people.
+
+## How a lead is counted
+
+Both forms — the enquiry form on `/contact` and the WhatsApp quote form on the
+ad landing pages — finish by sending the visitor to `/thank-you`, carrying
+which page they came from, which form it was, and a one-off id. That page is
+the conversion: it is the only URL someone reaches by becoming a lead, which is
+what makes it usable as a destination in Google Ads and Meta.
+
+- `src/config/analytics.ts` — the ids, read from the environment.
+- `src/components/analytics/analytics-scripts.tsx` — the tags, written only for ids that are set.
+- `src/lib/analytics/track-lead.ts` — the one place a lead event is defined.
+- `src/lib/analytics/lead-redirect.ts` — mints the id and builds the thank-you URL.
+- `src/features/marketing/components/lead-conversion.tsx` — fires it once per id.
+
+The id is the deduplication key for both platforms and is remembered in
+`sessionStorage`, so a refresh or a back-and-forward on the thank-you page does
+not invent a second conversion.
 
 ## Architecture
 
@@ -113,7 +138,7 @@ fails the build.
 `/website-development`, `/mobile-app-development`, `/meta-google-ads` and
 `/ai-content-creation`. Each is a content file plus a four-line route —
 `LandingPage` assembles the same nine sections for all of them, because the
-section order *is* the sales argument and it does not change between services.
+section order _is_ the sales argument and it does not change between services.
 
 They deliberately break several of the marketing site's conventions, and the
 reasons matter if you edit them:
@@ -180,6 +205,6 @@ code they cover and end-to-end journeys in `tests/e2e`.
 - kebab-case files, PascalCase components, camelCase functions.
 - Absolute imports via `@/*`.
 - Import order: framework → third-party → internal → types.
-- Comments explain *why*, not *what*.
+- Comments explain _why_, not _what_.
 
 Full engineering standards: [`docs/Nextjs_application_best_practices.md`](docs/Nextjs_application_best_practices.md).

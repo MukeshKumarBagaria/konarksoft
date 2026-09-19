@@ -1,9 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useId, useState, type FormEvent } from "react";
 
 import { buttonStyles } from "@/components/ui/button";
 import { CheckCircleOutlineIcon, ChevronDownIcon } from "@/components/ui/icons";
+import { newLeadId, thankYouHref } from "@/lib/analytics/lead-redirect";
 import { cn } from "@/lib/utils/cn";
 import type { ContactFieldErrors } from "@/lib/contact/submission";
 import type { ContactContent } from "@/types/content";
@@ -19,7 +21,13 @@ const controlStyles =
 /** Errors are drawn in the brand red — the palette carries no separate danger tone. */
 const invalidStyles = "ring-brand/70";
 
-function FieldLabel({ htmlFor, children }: { htmlFor: string; children: string }) {
+function FieldLabel({
+  htmlFor,
+  children,
+}: {
+  htmlFor: string;
+  children: string;
+}) {
   return (
     <label
       htmlFor={htmlFor}
@@ -49,6 +57,7 @@ function FieldError({ id, children }: { id: string; children?: string }) {
  * because the route is reachable without the form.
  */
 export function ContactForm({ content }: { content: FormCopy }) {
+  const router = useRouter();
   const formId = useId();
   const [status, setStatus] = useState<Status>("idle");
   const [formError, setFormError] = useState("");
@@ -93,7 +102,15 @@ export function ContactForm({ content }: { content: FormCopy }) {
 
       form.reset();
       setService("");
+
+      // Both, deliberately. The redirect is what gets the lead counted — the
+      // thank-you page is the only URL a visitor reaches by becoming one — and
+      // the success panel behind it is what they see if the navigation is slow
+      // or never happens.
       setStatus("success");
+      router.push(
+        thankYouHref({ source: "/contact", form: "contact", id: newLeadId() }),
+      );
     } catch {
       // Offline, or the request never reached the route.
       setFormError(content.error);
@@ -245,9 +262,7 @@ export function ContactForm({ content }: { content: FormCopy }) {
               ))}
             </select>
 
-            <ChevronDownIcon
-              className="pointer-events-none absolute inset-y-0 end-4 my-auto h-4 w-4 text-muted"
-            />
+            <ChevronDownIcon className="pointer-events-none absolute inset-y-0 end-4 my-auto h-4 w-4 text-muted" />
           </div>
 
           <FieldError id={errorId("service")}>{fieldErrors.service}</FieldError>
@@ -266,7 +281,11 @@ export function ContactForm({ content }: { content: FormCopy }) {
             placeholder={content.fields.message.placeholder}
             aria-invalid={fieldErrors.message ? true : undefined}
             aria-describedby={describedBy("message")}
-            className={cn(controlStyles, "mt-2 resize-y py-3", fieldErrors.message && invalidStyles)}
+            className={cn(
+              controlStyles,
+              "mt-2 resize-y py-3",
+              fieldErrors.message && invalidStyles,
+            )}
           />
           <FieldError id={errorId("message")}>{fieldErrors.message}</FieldError>
         </div>

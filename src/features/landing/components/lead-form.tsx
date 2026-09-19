@@ -1,11 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useId, useState, type FormEvent } from "react";
 
 import { buttonStyles } from "@/components/ui/button";
 import { CheckIcon, PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { siteConfig } from "@/config/site";
 import { callHref, chatHrefFor } from "@/features/landing/whatsapp";
+import { newLeadId, thankYouHref } from "@/lib/analytics/lead-redirect";
 import { cn } from "@/lib/utils/cn";
 import type { LandingContent } from "@/types/content";
 
@@ -26,6 +28,7 @@ type Errors = Partial<Record<FieldName, string>>;
  * and a phone number, both of which work with none.
  */
 export function LeadForm({ content }: { content: LandingContent["form"] }) {
+  const router = useRouter();
   const fieldId = useId();
   const [errors, setErrors] = useState<Errors>({});
 
@@ -99,10 +102,36 @@ export function LeadForm({ content }: { content: LandingContent["form"] }) {
     }).catch(() => {});
 
     // Still inside the submit gesture — the fetch above does not yield, so the
-    // user activation that lets this through popup blockers is intact. The
-    // fallback covers the browsers that refuse anyway.
-    const opened = window.open(href, "_blank", "noopener,noreferrer");
-    if (!opened) window.location.href = href;
+    // user activation that lets this through popup blockers is intact.
+    //
+    // Opened blank and navigated after, rather than `open(href, "_blank",
+    // "noopener")`: with `noopener` in the feature string `open` returns null
+    // by specification, which is indistinguishable from a blocked popup, so
+    // the fallback below fired on every submission and threw this tab — and
+    // the ad click that paid for it — at WhatsApp as well. A blank tab is
+    // same-origin for the moment it takes to sever `opener`, which is what
+    // `noopener` was there for.
+    const opened = window.open("", "_blank");
+    if (!opened) {
+      // Popup actually blocked. This tab is leaving for WhatsApp, so there is
+      // nowhere to send it afterwards.
+      window.location.href = href;
+      return;
+    }
+
+    opened.opener = null;
+    opened.location.replace(href);
+
+    // WhatsApp took the new tab; this one goes to the thank-you page, which is
+    // what makes a chat that happens off-site countable as a conversion — and
+    // what the visitor comes back to when they switch out of WhatsApp.
+    router.push(
+      thankYouHref({
+        source: window.location.pathname,
+        form: "quote",
+        id: newLeadId(),
+      }),
+    );
   }
 
   const fieldClass =

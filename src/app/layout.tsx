@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { AnalyticsScripts } from "@/components/analytics/analytics-scripts";
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider";
 import { fontVariables } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <style>{`[data-reveal]{opacity:1 !important}`}</style>
         </noscript>
         <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        <AnalyticsScripts />
       </body>
     </html>
   );

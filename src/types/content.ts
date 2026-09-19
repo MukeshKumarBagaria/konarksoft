@@ -95,6 +95,32 @@ export type NextStepsContent = {
   note: string;
 };
 
+/**
+ * The page every form lands on once it has been sent.
+ *
+ * It exists to be measured as much as to be read: it is the only URL that a
+ * person reaches solely by becoming a lead, which is what makes it a
+ * conversion in Google Ads and Meta. The copy still has to earn the visit —
+ * someone who has just handed over their number wants to know when they will
+ * hear back and from whom.
+ */
+export type ThankYouContent = {
+  meta: { title: string; description: string };
+  canonical: Route;
+  eyebrow: string;
+  /** `accent` is the half set in the display serif. */
+  heading: { lead: string; accent: string };
+  description: string;
+  /** What happens next, in the order it happens. */
+  steps: readonly { index: string; title: string; description: string }[];
+  /** Opens WhatsApp with the message typed; the number comes from `siteConfig`. */
+  chat: WhatsAppAction;
+  /** Somewhere to go while they wait, rather than a dead end. */
+  browse: { label: string; href: Route };
+  /** The line that names the fallback, with the studio's number beside it. */
+  fallback: { lead: string; callLabel: string };
+};
+
 /** Which of the two paint jobs a plan card wears. */
 export type PricingTone = "ember" | "frost";
 
