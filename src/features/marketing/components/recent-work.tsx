@@ -28,6 +28,27 @@ const COPIES = 3;
  */
 const REST_OFFSET = 0.45;
 
+/**
+ * How fast the rail travels on its own, in pixels per second. Slow enough to
+ * read a project name as it passes — a rail that outruns reading is a banner,
+ * and people look away from banners.
+ */
+const DRIFT_SPEED = 50;
+
+/**
+ * How long the drift stands down after the visitor moves the rail themselves.
+ * Long enough to finish an arrow glide and look at what it landed on, short
+ * enough that an abandoned rail starts moving again before the page scrolls on.
+ */
+const HOLD_MS = 2400;
+
+/**
+ * Ceiling on the gap between two frames. A backgrounded tab or a long task can
+ * hand the next frame a gap of seconds, and an unclamped delta would teleport
+ * the rail half a set on the frame the user comes back to.
+ */
+const MAX_FRAME_MS = 64;
+
 function RailButton({
   label,
   onClick,
@@ -124,13 +145,24 @@ function WorkCard({
 }
 
 /**
- * An endless horizontal rail of recent projects.
+ * An endless horizontal rail of recent projects, travelling on its own.
  *
  * The list is rendered `COPIES` times and the rail is kept in the middle copy,
  * so there is no first or last card: scrolling either way always has more rail
  * ahead of it. When the position drifts out of that middle copy it is moved back
  * by exactly one set width — the same pixels are under the viewport before and
  * after, so the jump cannot be seen.
+ *
+ * The drift is driven frame by frame rather than by a CSS animation, because
+ * the rail is a real scroll container: a transform on the track would keep
+ * moving underneath a visitor who is dragging it, and the two offsets would
+ * fight. Moving the scroll position instead means the drift, the drag, the
+ * wheel, the arrows and the keyboard are all the same single value.
+ *
+ * It stands down whenever the visitor has any claim on the rail — pointer over
+ * it, focus inside it, a gesture or an arrow in the last `HOLD_MS`, the tab in
+ * the background, the section off screen, or reduced motion asked for — so it
+ * never competes with someone who is reading or steering.
  *
  * The rail is still a plain scroll container, so drag, wheel and keyboard work
  * on their own; `useHorizontalSmoothScroll` layers Lenis over it for the arrows.
@@ -141,6 +173,16 @@ export function RecentWork({ content }: { content: RecentWorkContent }) {
 
   /** One card plus one gap, and the width of a single copy of the list. */
   const geometry = useRef({ step: 0, setWidth: 0 });
+
+  /** Everything that can hold the drift, read once per frame. */
+  const engaged = useRef(false);
+  const onScreen = useRef(true);
+  const holdUntil = useRef(0);
+
+  /** Hands the rail to the visitor for a moment. */
+  const holdDrift = useCallback(() => {
+    holdUntil.current = performance.now() + HOLD_MS;
+  }, []);
 
   const measure = useCallback(() => {
     const cards = railRef.current?.firstElementChild?.children;
@@ -213,6 +255,94 @@ export function RecentWork({ content }: { content: RecentWorkContent }) {
     };
   }, [measure, recentre]);
 
+  useEffect(() => {
+    const rail = railRef.current;
+    if (!rail) return;
+
+    // Checked here rather than left to the CSS: this motion is scripted, so
+    // the global `prefers-reduced-motion` rules never reach it.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    // A rail nobody can see still costs a frame's work and a scroll event
+    // every 16ms, so it only runs while the section is on screen.
+    const watcher = new IntersectionObserver(
+      ([entry]) => {
+        onScreen.current = entry.isIntersecting;
+      },
+      { rootMargin: "120px" },
+    );
+    watcher.observe(rail);
+
+    let frame = 0;
+    let previous = performance.now();
+
+    /**
+     * The drift's own position, carried at full precision.
+     *
+     * `scrollLeft` reads back rounded to whole pixels, so advancing it by the
+     * fraction of a pixel a frame is worth and reading it again the next frame
+     * loses the remainder — the rail then travels at one pixel per frame
+     * whatever `DRIFT_SPEED` says, which is both wrong and tied to the display's
+     * refresh rate. Accumulating here and writing the total keeps the speed.
+     */
+    let position = rail.scrollLeft;
+
+    const advance = (now: number) => {
+      frame = requestAnimationFrame(advance);
+
+      const elapsed = Math.min(now - previous, MAX_FRAME_MS);
+      previous = now;
+
+      if (
+        engaged.current ||
+        !onScreen.current ||
+        now < holdUntil.current ||
+        document.visibilityState !== "visible"
+      ) {
+        return;
+      }
+
+      const { setWidth } = geometry.current;
+      if (!setWidth) {
+        measure();
+        return;
+      }
+
+      // Recentred before the rail moves, never after: both write the scroll
+      // position, and advancing second would start from a value the recentre
+      // has already replaced. Skipping this frame's fraction of a pixel costs
+      // nothing visible.
+      //
+      // The test is which copy the rail is in, not how far it has drifted:
+      // `recentre` preserves the position within the set, so anywhere inside
+      // the middle copy it lands exactly where it started — and a no-op that
+      // returns early on every frame would leave the rail standing still.
+      if (rail.scrollLeft >= setWidth * 2 || rail.scrollLeft < setWidth) {
+        recentre();
+        return;
+      }
+
+      // Anything else that moved the rail — a drag, an arrow, the recentre —
+      // leaves the accumulator stale, and continuing from it would yank the
+      // rail back. A pixel of tolerance absorbs the rounding above.
+      if (Math.abs(rail.scrollLeft - position) > 1.5)
+        position = rail.scrollLeft;
+
+      position += (DRIFT_SPEED * elapsed) / 1000;
+
+      // Through Lenis rather than `scrollLeft`: Lenis rewrites the container
+      // from its own value every frame and would undo a direct assignment.
+      jumpTo(position);
+    };
+
+    frame = requestAnimationFrame(advance);
+
+    return () => {
+      cancelAnimationFrame(frame);
+      watcher.disconnect();
+    };
+  }, [jumpTo, measure, recentre]);
+
   const step = useCallback(
     (direction: 1 | -1) => {
       const { step: cardStep } = measure();
@@ -220,12 +350,19 @@ export function RecentWork({ content }: { content: RecentWorkContent }) {
       // the copies while it is still animating.
       const { setWidth } = geometry.current;
       const rail = railRef.current;
-      if (rail && setWidth && Math.abs(rail.scrollLeft - setWidth) > setWidth * 0.5) {
+      if (
+        rail &&
+        setWidth &&
+        Math.abs(rail.scrollLeft - setWidth) > setWidth * 0.5
+      ) {
         recentre();
       }
+      // The glide and the drift both write the scroll position; without this
+      // the next frame of drift would overwrite the arrow's animation.
+      holdDrift();
       scrollBy(cardStep * direction);
     },
-    [measure, recentre, scrollBy],
+    [holdDrift, measure, recentre, scrollBy],
   );
 
   return (
@@ -252,21 +389,34 @@ export function RecentWork({ content }: { content: RecentWorkContent }) {
             <ArrowUpRightIcon className="h-4 w-4" />
           </Link>
 
-          <RailButton
-            label="Previous projects"
-            onClick={() => step(-1)}
-            flip
-          />
+          <RailButton label="Previous projects" onClick={() => step(-1)} flip />
           <RailButton label="Next projects" onClick={() => step(1)} />
         </div>
       </div>
 
       {/* No gutter: the row bleeds to both edges so a card is always cut off at
           the start, matching how it looks part-way through the loop. */}
+      {/* `onFocus`/`onBlur` are React's bubbling focusin/focusout, so tabbing
+          to a card's link inside the rail holds it too. */}
       <div
         ref={railRef}
         tabIndex={0}
         aria-label={`${content.heading.lead} ${content.heading.accent}`}
+        onMouseEnter={() => {
+          engaged.current = true;
+        }}
+        onMouseLeave={() => {
+          engaged.current = false;
+        }}
+        onFocus={() => {
+          engaged.current = true;
+        }}
+        onBlur={() => {
+          engaged.current = false;
+        }}
+        onPointerDown={holdDrift}
+        onWheel={holdDrift}
+        onKeyDown={holdDrift}
         className="work-rail mt-12 overflow-x-auto"
       >
         {/* Card width and gap live in one place so the resting offset can be
