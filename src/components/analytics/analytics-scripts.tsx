@@ -15,6 +15,7 @@ import { analyticsConfig, googleTagId } from "@/config/analytics";
  * stray quote in an environment variable cannot break out of the string it
  * sits in.
  */
+
 export function AnalyticsScripts() {
   const { metaPixel } = analyticsConfig;
 
