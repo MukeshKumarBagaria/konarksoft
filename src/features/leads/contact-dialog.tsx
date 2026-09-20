@@ -197,7 +197,7 @@ export function ContactDialog({
           <button
             type="button"
             onClick={close}
-            aria-label={content.cancel}
+            aria-label="Close"
             className="-mt-1 -mr-2 grid h-10 w-10 shrink-0 place-items-center rounded-full text-ink transition-colors duration-200 hover:bg-black/5"
           >
             <CloseIcon className="h-5 w-5" />

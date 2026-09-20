@@ -75,10 +75,16 @@ body {
   color: #fff;
 }
 
-:focus-visible {
-  outline: 2px solid var(--color-brand);
-  outline-offset: 3px;
-  border-radius: 4px;
+/* In the base layer, not unlayered: unlayered CSS beats every Tailwind layer
+   regardless of specificity, and this ring must lose to `focus:outline-none`
+   on form fields, which paint their own focus as an inset shadow. Everything
+   else — links, buttons, checkboxes — still gets the ring. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
 }
 
 /* ---------------------------------------------------------------------------
