@@ -1,12 +1,9 @@
 import type { ReactNode } from "react";
 
-import {
-  PaperPlaneIcon,
-  PhoneIcon,
-  WhatsAppIcon,
-} from "@/components/ui/icons";
+import { PaperPlaneIcon, PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { siteConfig } from "@/config/site";
-import { telLink, whatsappLink } from "@/lib/utils/whatsapp";
+import { WhatsAppLink } from "@/features/leads/whatsapp-cta";
+import { telLink } from "@/lib/utils/whatsapp";
 
 /**
  * What the WhatsApp thread opens with. Generic on purpose: unlike the landing
@@ -78,15 +75,13 @@ export function CtaShell({
             {/* Same line as the one above it, so the number is not printed
                 twice in one row — this entry is here for the channel, not the
                 digits. */}
-            <a
-              href={whatsappLink(siteConfig.whatsappNumber, CHAT_OPENER)}
-              target="_blank"
-              rel="noopener noreferrer"
+            <WhatsAppLink
+              message={CHAT_OPENER}
               className="inline-flex items-center gap-3 transition-colors duration-300 hover:text-white"
             >
               <WhatsAppIcon className="h-[18px] w-[18px] shrink-0" />
               WhatsApp
-            </a>
+            </WhatsAppLink>
           </div>
         </div>
 

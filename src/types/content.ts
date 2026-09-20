@@ -121,6 +121,29 @@ export type ThankYouContent = {
   fallback: { lead: string; callLabel: string };
 };
 
+/** Label and placeholder for one control in the WhatsApp gate. */
+export type GateFieldCopy = { label: string; placeholder?: string };
+
+/**
+ * The details form every WhatsApp button opens before the handoff.
+ *
+ * It stands between a visitor and the chat they asked for, so every string in
+ * it is short: the title says why they are being asked, the fields ask only
+ * what the reply needs, and the submit label promises the chat is still coming.
+ */
+export type WhatsAppGateContent = {
+  title: string;
+  description: string;
+  fields: Record<"name" | "email" | "services" | "requirements", GateFieldCopy>;
+  /** The choices under "services"; a visitor can tick several. */
+  services: readonly string[];
+  errors: Record<"name" | "email" | "services" | "requirements", string>;
+  cancel: string;
+  submit: string;
+  /** Under the buttons — what happens to what they typed. */
+  note: string;
+};
+
 /** Which of the two paint jobs a plan card wears. */
 export type PricingTone = "ember" | "frost";
 

@@ -1,4 +1,4 @@
-import { ChatCta } from "@/features/landing/components/chat-cta";
+import { WhatsAppCta } from "@/features/leads/whatsapp-cta";
 import type { LandingContent } from "@/types/content";
 
 /**
@@ -32,7 +32,7 @@ export function StickyOfferBar({
             </span>
           </p>
 
-          <ChatCta
+          <WhatsAppCta
             action={content.cta}
             variant="whatsapp"
             size="md"

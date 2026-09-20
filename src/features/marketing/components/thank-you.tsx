@@ -29,7 +29,11 @@ export function ThankYou({ content }: { content: ThankYouContent }) {
         description={content.description}
       >
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-          {/* `target="_blank"`: on desktop `wa.me` opens WhatsApp Web, and
+          {/* A plain link, not `WhatsAppCta`: the visitor has just filled in
+              a form to get here, and putting another one in front of the chat
+              would be the wrong way to say thank you.
+
+              `target="_blank"`: on desktop `wa.me` opens WhatsApp Web, and
               doing that in this tab would throw the page away for anyone not
               already signed in there. */}
           <a

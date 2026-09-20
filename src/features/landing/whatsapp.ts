@@ -10,9 +10,4 @@ export function chatHref(action: WhatsAppAction): string {
   return whatsappLink(siteConfig.whatsappNumber, action.message);
 }
 
-/** Same, for a message assembled at runtime rather than written in content. */
-export function chatHrefFor(message: string): string {
-  return whatsappLink(siteConfig.whatsappNumber, message);
-}
-
 export const callHref = telLink(siteConfig.contactPhone);

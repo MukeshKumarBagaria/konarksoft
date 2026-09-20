@@ -1,6 +1,6 @@
 import { buttonStyles } from "@/components/ui/button";
 import { CheckIcon, StarIcon } from "@/components/ui/icons";
-import { ChatCta } from "@/features/landing/components/chat-cta";
+import { WhatsAppCta } from "@/features/leads/whatsapp-cta";
 import type { LandingContent, LandingPlan } from "@/types/content";
 
 /**
@@ -33,7 +33,10 @@ export function LandingHero({
 
       <div className="relative mx-auto max-w-3xl px-5 pt-28 pb-16 text-center sm:px-6 sm:pt-36 sm:pb-20">
         <p className="inline-flex items-center gap-2 rounded-full bg-white/85 px-4 py-2 text-[13px] font-medium text-ink shadow-pill backdrop-blur-sm">
-          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-brand" />
+          <span
+            aria-hidden="true"
+            className="h-1.5 w-1.5 rounded-full bg-brand"
+          />
           {content.badge}
         </p>
 
@@ -54,7 +57,7 @@ export function LandingHero({
         {/* Full-width on a phone so the primary action is a thumb-sized target
             that cannot be missed; the pair sits inline once there is room. */}
         <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <ChatCta action={content.primaryCta} />
+          <WhatsAppCta action={content.primaryCta} />
 
           <a
             href={content.secondaryCta.href}

@@ -1,9 +1,8 @@
 import Link from "next/link";
 
 import { buttonStyles } from "@/components/ui/button";
-import { CheckIcon, PaperPlaneIcon, WhatsAppIcon } from "@/components/ui/icons";
-import { siteConfig } from "@/config/site";
-import { whatsappLink } from "@/lib/utils/whatsapp";
+import { CheckIcon, PaperPlaneIcon } from "@/components/ui/icons";
+import { WhatsAppCta } from "@/features/leads/whatsapp-cta";
 import type { NextStepsContent } from "@/types/content";
 
 /**
@@ -106,22 +105,12 @@ export function NextSteps({ content }: { content: NextStepsContent }) {
             {content.cta.label}
           </Link>
 
-          {/* `target="_blank"` on purpose: on desktop `wa.me` opens WhatsApp
-              Web, and doing that in this tab would throw the homepage away for
-              anyone not already signed in there. */}
-          <a
-            href={whatsappLink(siteConfig.whatsappNumber, content.chat.message)}
-            target="_blank"
-            rel="noreferrer"
-            className={buttonStyles({
-              variant: "whatsapp",
-              size: "lg",
-              className: "w-full sm:w-auto",
-            })}
-          >
-            <WhatsAppIcon className="h-[18px] w-[18px] shrink-0" />
-            {content.chat.label}
-          </a>
+          <WhatsAppCta
+            action={content.chat}
+            variant="whatsapp"
+            size="lg"
+            className="w-full sm:w-auto"
+          />
         </div>
 
         <p className="mt-5 text-center text-[14px] text-ink/65">

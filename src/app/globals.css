@@ -260,7 +260,8 @@ html.lenis body {
      dissolve into the light background. */
   --card-outline: rgba(18, 18, 32, 0.055);
   --card-elevation:
-    0 2px 8px -5px rgba(18, 18, 32, 0.2), 0 26px 50px -30px rgba(18, 18, 32, 0.45);
+    0 2px 8px -5px rgba(18, 18, 32, 0.2),
+    0 26px 50px -30px rgba(18, 18, 32, 0.45);
 
   background-color: var(--card-tint);
   /* Specular sweep across the top-left corner, layered over the tint. Sits in
@@ -344,11 +345,11 @@ html.lenis body {
     ),
     /* Under the plane: the cool half, strongest where it meets the corner. */
     radial-gradient(
-      46% 108% at 101% 82%,
-      rgba(139, 74, 235, 0.55) 0%,
-      rgba(160, 120, 240, 0.24) 34%,
-      rgba(255, 255, 255, 0) 68%
-    ),
+        46% 108% at 101% 82%,
+        rgba(139, 74, 235, 0.55) 0%,
+        rgba(160, 120, 240, 0.24) 34%,
+        rgba(255, 255, 255, 0) 68%
+      ),
     radial-gradient(
       40% 92% at 97% 2%,
       rgba(200, 150, 245, 0.38) 0%,
@@ -398,6 +399,35 @@ html.lenis body {
 .decor-drift {
   /* `alternate` so it eases back out the way it came instead of snapping home. */
   animation: decor-drift 5.5s var(--ease-out-soft) infinite alternate;
+}
+
+/* ---------------------------------------------------------------------------
+   WhatsApp gate
+   The details dialog in front of every WhatsApp button. It is a native
+   <dialog>, so the backdrop is the element's own pseudo and the animation
+   only has to cover the card coming in — closing is instant, as a dismissal
+   should be.
+--------------------------------------------------------------------------- */
+.chat-dialog[open] {
+  animation: chat-dialog-in 320ms var(--ease-out-soft);
+}
+
+.chat-dialog[open]::backdrop {
+  animation: chat-backdrop-in 320ms ease-out;
+}
+
+@keyframes chat-dialog-in {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+    scale: 0.98;
+  }
+}
+
+@keyframes chat-backdrop-in {
+  from {
+    opacity: 0;
+  }
 }
 
 /* ---------------------------------------------------------------------------
@@ -737,17 +767,17 @@ html.lenis body {
     /* Ember settling along the bottom edge, carried a little right of centre so
        the card does not sit heavier on one side. */
     radial-gradient(
-      72% 40% at 52% 112%,
-      rgba(255, 152, 84, 0.6) 0%,
-      rgba(232, 80, 40, 0.28) 36%,
-      rgba(21, 6, 16, 0) 72%
-    ),
+        72% 40% at 52% 112%,
+        rgba(255, 152, 84, 0.6) 0%,
+        rgba(232, 80, 40, 0.28) 36%,
+        rgba(21, 6, 16, 0) 72%
+      ),
     /* Plum cast in the top-left corner. */
     radial-gradient(
-      58% 72% at 6% -8%,
-      rgba(86, 28, 68, 0.95) 0%,
-      rgba(21, 6, 16, 0) 62%
-    ),
+        58% 72% at 6% -8%,
+        rgba(86, 28, 68, 0.95) 0%,
+        rgba(21, 6, 16, 0) 62%
+      ),
     linear-gradient(118deg, #2e1020 0%, #170710 46%, #2a0d16 100%);
 }
 
@@ -951,7 +981,12 @@ html.lenis body {
 --------------------------------------------------------------------------- */
 .lp-sticky {
   background-color: #0d0d11;
-  background-image: linear-gradient(96deg, #17171f 0%, #241621 60%, #30161a 100%);
+  background-image: linear-gradient(
+    96deg,
+    #17171f 0%,
+    #241621 60%,
+    #30161a 100%
+  );
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.14),

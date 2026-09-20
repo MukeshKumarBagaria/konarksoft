@@ -6,7 +6,8 @@ import { useId, useState, type FormEvent } from "react";
 import { buttonStyles } from "@/components/ui/button";
 import { CheckIcon, PhoneIcon, WhatsAppIcon } from "@/components/ui/icons";
 import { siteConfig } from "@/config/site";
-import { callHref, chatHrefFor } from "@/features/landing/whatsapp";
+import { callHref } from "@/features/landing/whatsapp";
+import { openWhatsApp, recordLead } from "@/features/leads/handoff";
 import { newLeadId, thankYouHref } from "@/lib/analytics/lead-redirect";
 import { cn } from "@/lib/utils/cn";
 import type { LandingContent } from "@/types/content";
@@ -79,59 +80,17 @@ export function LeadForm({ content }: { content: LandingContent["form"] }) {
       .filter(Boolean)
       .join("\n");
 
-    const href = chatHrefFor(message);
+    const source = window.location.pathname;
 
-    // Fire-and-forget, and deliberately not awaited: the visitor is about to be
-    // handed to another app, and making them wait on our inbox — or showing
-    // them an error from it — would cost the handoff that actually converts.
-    // `keepalive` is what lets the request finish after the tab is gone.
-    void fetch("/api/lead", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      keepalive: true,
-      body: JSON.stringify({
-        name,
-        phone,
-        need,
-        business,
-        details,
-        // Which of the ad pages this came from, so the inbox can tell them
-        // apart without the copy having to name itself.
-        source: window.location.pathname,
-      }),
-    }).catch(() => {});
+    // Popup first, while the click's user activation is still unspent — see
+    // the note on `openWhatsApp`.
+    const stayed = openWhatsApp(message);
 
-    // Still inside the submit gesture — the fetch above does not yield, so the
-    // user activation that lets this through popup blockers is intact.
-    //
-    // Opened blank and navigated after, rather than `open(href, "_blank",
-    // "noopener")`: with `noopener` in the feature string `open` returns null
-    // by specification, which is indistinguishable from a blocked popup, so
-    // the fallback below fired on every submission and threw this tab — and
-    // the ad click that paid for it — at WhatsApp as well. A blank tab is
-    // same-origin for the moment it takes to sever `opener`, which is what
-    // `noopener` was there for.
-    const opened = window.open("", "_blank");
-    if (!opened) {
-      // Popup actually blocked. This tab is leaving for WhatsApp, so there is
-      // nowhere to send it afterwards.
-      window.location.href = href;
-      return;
-    }
+    recordLead({ kind: "quote", name, phone, need, business, details, source });
 
-    opened.opener = null;
-    opened.location.replace(href);
+    if (!stayed) return;
 
-    // WhatsApp took the new tab; this one goes to the thank-you page, which is
-    // what makes a chat that happens off-site countable as a conversion — and
-    // what the visitor comes back to when they switch out of WhatsApp.
-    router.push(
-      thankYouHref({
-        source: window.location.pathname,
-        form: "quote",
-        id: newLeadId(),
-      }),
-    );
+    router.push(thankYouHref({ source, form: "quote", id: newLeadId() }));
   }
 
   const fieldClass =

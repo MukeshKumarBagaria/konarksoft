@@ -4,6 +4,7 @@ import { AnalyticsScripts } from "@/components/analytics/analytics-scripts";
 import { SmoothScrollProvider } from "@/components/providers/smooth-scroll-provider";
 import { fontVariables } from "@/config/fonts";
 import { siteConfig } from "@/config/site";
+import { WhatsAppGateProvider } from "@/features/leads/whatsapp-gate";
 
 import "./globals.css";
 
@@ -44,7 +45,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <noscript>
           <style>{`[data-reveal]{opacity:1 !important}`}</style>
         </noscript>
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        {/* The gate sits inside the scroll provider because its dialog locks
+            the smooth-scroll layer while open, the way the mobile menu does. */}
+        <SmoothScrollProvider>
+          <WhatsAppGateProvider>{children}</WhatsAppGateProvider>
+        </SmoothScrollProvider>
         <AnalyticsScripts />
       </body>
     </html>
