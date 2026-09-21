@@ -178,150 +178,178 @@ export function ContactDialog({
         close();
       }}
       onClick={onBackdropClick}
-      className="chat-dialog m-auto w-[calc(100%-2rem)] max-w-lg rounded-[1.75rem] border-0 bg-transparent p-0 text-ink backdrop:bg-ink-strong/55 backdrop:backdrop-blur-sm"
+      className="chat-dialog m-0 mt-auto h-[min(92dvh,44rem)] w-full max-w-full overflow-visible border-0 bg-transparent p-0 text-ink backdrop:bg-ink-strong/55 backdrop:backdrop-blur-sm sm:m-auto sm:h-auto sm:w-[calc(100%-2rem)] sm:max-w-lg"
     >
-      <div className="max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-[1.75rem] bg-white p-6 shadow-float sm:p-8">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h2
-              id={id("title")}
-              className="text-[clamp(1.5rem,4vw,1.9rem)] leading-tight font-bold tracking-[-0.025em] text-ink"
-            >
-              {content.title}
-            </h2>
-            <p className="mt-2 text-[15px] leading-relaxed text-muted text-pretty">
-              {content.description}
-            </p>
-          </div>
-
-          <button
-            type="button"
-            onClick={close}
-            aria-label="Close"
-            className="-mt-1 -mr-2 grid h-10 w-10 shrink-0 place-items-center rounded-full text-ink transition-colors duration-200 hover:bg-black/5"
-          >
-            <CloseIcon className="h-5 w-5" />
-          </button>
+      {/* Full-height bottom sheet under `sm`: a native <dialog> defaults to
+          top-anchored centering that fights a mobile browser's shifting
+          `100vh` (address bar show/hide), which is what pinned this card to
+          the top edge with the close button crushed against the notch. A
+          sheet that owns its own height and scrolls internally sidesteps that
+          entirely, and reads as the smoother, more native pattern on a phone
+          besides. `sm:` restores the floating centered card. */}
+      <div className="flex h-full max-h-full w-full flex-col overflow-hidden rounded-t-[1.75rem] bg-white shadow-float sm:max-h-[calc(100dvh-2rem)] sm:rounded-[1.75rem]">
+        {/* Drag-handle affordance — sheets are dismissed by swipe on every
+            native surface a visitor already knows, so its absence is what
+            makes a sheet feel stuck rather than smooth. Decorative only; the
+            explicit close button below remains the actual control. */}
+        <div
+          aria-hidden="true"
+          className="flex shrink-0 justify-center pt-2.5 pb-1 sm:hidden"
+        >
+          <span className="h-1.5 w-10 rounded-full bg-black/15" />
         </div>
 
-        <form onSubmit={handleSubmit} noValidate className="mt-6">
-          <div className="grid gap-4 sm:grid-cols-2">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:p-8">
+          <div className="flex items-start justify-between gap-4">
             <div>
-              <label htmlFor={id("name")} className={labelClass}>
-                {content.fields.name.label}
-              </label>
-              <input
-                ref={nameRef}
-                id={id("name")}
-                name="name"
-                type="text"
-                autoComplete="name"
-                placeholder={content.fields.name.placeholder}
-                aria-invalid={errors.name ? true : undefined}
-                aria-describedby={errors.name ? errorId("name") : undefined}
-                className={cn(fieldClass, "h-12", errors.name && invalidClass)}
-              />
-              <FieldError id={errorId("name")}>{errors.name}</FieldError>
+              <h2
+                id={id("title")}
+                className="text-[clamp(1.5rem,4vw,1.9rem)] leading-tight font-bold tracking-[-0.025em] text-ink"
+              >
+                {content.title}
+              </h2>
+              <p className="mt-2 text-[15px] leading-relaxed text-muted text-pretty">
+                {content.description}
+              </p>
             </div>
 
-            <div>
-              <label htmlFor={id("email")} className={labelClass}>
-                {content.fields.email.label}
-              </label>
-              <input
-                id={id("email")}
-                name="email"
-                type="email"
-                autoComplete="email"
-                inputMode="email"
-                placeholder={content.fields.email.placeholder}
-                aria-invalid={errors.email ? true : undefined}
-                aria-describedby={errors.email ? errorId("email") : undefined}
-                className={cn(fieldClass, "h-12", errors.email && invalidClass)}
-              />
-              <FieldError id={errorId("email")}>{errors.email}</FieldError>
-            </div>
-
-            <fieldset
-              className="sm:col-span-2"
-              aria-invalid={errors.services ? true : undefined}
-              aria-describedby={
-                errors.services ? errorId("services") : undefined
-              }
-            >
-              <legend className={labelClass}>
-                {content.fields.services.label}
-              </legend>
-
-              <div className="mt-2.5 grid gap-x-4 gap-y-2.5 sm:grid-cols-2">
-                {content.services.map((service) => (
-                  <label
-                    key={service}
-                    className="flex cursor-pointer items-center gap-3 rounded-xl px-1 py-1 text-[15px] text-ink"
-                  >
-                    <input
-                      type="checkbox"
-                      name="services"
-                      value={service}
-                      className="h-[18px] w-[18px] shrink-0 cursor-pointer rounded accent-brand"
-                    />
-                    {service}
-                  </label>
-                ))}
-              </div>
-
-              <FieldError id={errorId("services")}>
-                {errors.services}
-              </FieldError>
-            </fieldset>
-
-            <div className="sm:col-span-2">
-              <label htmlFor={id("requirements")} className={labelClass}>
-                {content.fields.requirements.label}
-              </label>
-              <textarea
-                id={id("requirements")}
-                name="requirements"
-                rows={4}
-                maxLength={2000}
-                placeholder={content.fields.requirements.placeholder}
-                aria-invalid={errors.requirements ? true : undefined}
-                aria-describedby={
-                  errors.requirements ? errorId("requirements") : undefined
-                }
-                className={cn(
-                  fieldClass,
-                  "resize-y py-3",
-                  errors.requirements && invalidClass,
-                )}
-              />
-              <FieldError id={errorId("requirements")}>
-                {errors.requirements}
-              </FieldError>
-            </div>
-          </div>
-
-          <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <button
               type="button"
               onClick={close}
-              className={buttonStyles({ variant: "secondary", size: "lg" })}
+              aria-label="Close"
+              className="-mt-1 -mr-2 grid h-11 w-11 shrink-0 place-items-center rounded-full text-ink transition-colors duration-200 hover:bg-black/5 active:bg-black/10"
             >
-              {content.cancel}
-            </button>
-            <button
-              type="submit"
-              className={buttonStyles({ variant: "whatsapp", size: "lg" })}
-            >
-              <WhatsAppIcon className="h-[18px] w-[18px] shrink-0" />
-              {content.submit}
+              <CloseIcon className="h-5 w-5" />
             </button>
           </div>
 
-          <p className="mt-4 text-center text-[13px] text-muted sm:text-right">
-            {content.note}
-          </p>
-        </form>
+          <form onSubmit={handleSubmit} noValidate className="mt-6">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor={id("name")} className={labelClass}>
+                  {content.fields.name.label}
+                </label>
+                <input
+                  ref={nameRef}
+                  id={id("name")}
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder={content.fields.name.placeholder}
+                  aria-invalid={errors.name ? true : undefined}
+                  aria-describedby={errors.name ? errorId("name") : undefined}
+                  className={cn(
+                    fieldClass,
+                    "h-12",
+                    errors.name && invalidClass,
+                  )}
+                />
+                <FieldError id={errorId("name")}>{errors.name}</FieldError>
+              </div>
+
+              <div>
+                <label htmlFor={id("email")} className={labelClass}>
+                  {content.fields.email.label}
+                </label>
+                <input
+                  id={id("email")}
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  inputMode="email"
+                  placeholder={content.fields.email.placeholder}
+                  aria-invalid={errors.email ? true : undefined}
+                  aria-describedby={errors.email ? errorId("email") : undefined}
+                  className={cn(
+                    fieldClass,
+                    "h-12",
+                    errors.email && invalidClass,
+                  )}
+                />
+                <FieldError id={errorId("email")}>{errors.email}</FieldError>
+              </div>
+
+              <fieldset
+                className="sm:col-span-2"
+                aria-invalid={errors.services ? true : undefined}
+                aria-describedby={
+                  errors.services ? errorId("services") : undefined
+                }
+              >
+                <legend className={labelClass}>
+                  {content.fields.services.label}
+                </legend>
+
+                <div className="mt-2.5 grid gap-x-4 gap-y-2.5 sm:grid-cols-2">
+                  {content.services.map((service) => (
+                    <label
+                      key={service}
+                      className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-2.5 py-2 text-[15px] text-ink transition-colors duration-150 active:bg-black/5"
+                    >
+                      <input
+                        type="checkbox"
+                        name="services"
+                        value={service}
+                        className="h-[18px] w-[18px] shrink-0 cursor-pointer rounded accent-brand"
+                      />
+                      {service}
+                    </label>
+                  ))}
+                </div>
+
+                <FieldError id={errorId("services")}>
+                  {errors.services}
+                </FieldError>
+              </fieldset>
+
+              <div className="sm:col-span-2">
+                <label htmlFor={id("requirements")} className={labelClass}>
+                  {content.fields.requirements.label}
+                </label>
+                <textarea
+                  id={id("requirements")}
+                  name="requirements"
+                  rows={4}
+                  maxLength={2000}
+                  placeholder={content.fields.requirements.placeholder}
+                  aria-invalid={errors.requirements ? true : undefined}
+                  aria-describedby={
+                    errors.requirements ? errorId("requirements") : undefined
+                  }
+                  className={cn(
+                    fieldClass,
+                    "resize-y py-3",
+                    errors.requirements && invalidClass,
+                  )}
+                />
+                <FieldError id={errorId("requirements")}>
+                  {errors.requirements}
+                </FieldError>
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <button
+                type="button"
+                onClick={close}
+                className={buttonStyles({ variant: "secondary", size: "lg" })}
+              >
+                {content.cancel}
+              </button>
+              <button
+                type="submit"
+                className={buttonStyles({ variant: "whatsapp", size: "lg" })}
+              >
+                <WhatsAppIcon className="h-[18px] w-[18px] shrink-0" />
+                {content.submit}
+              </button>
+            </div>
+
+            <p className="mt-4 text-center text-[13px] text-muted sm:text-right">
+              {content.note}
+            </p>
+          </form>
+        </div>
       </div>
     </dialog>
   );

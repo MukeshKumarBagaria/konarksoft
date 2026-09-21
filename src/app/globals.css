@@ -414,12 +414,28 @@ html.lenis body {
    only has to cover the card coming in — closing is instant, as a dismissal
    should be.
 --------------------------------------------------------------------------- */
+/* Slides up from the thumb's edge of the screen — the entrance a bottom sheet
+   is expected to make on a touch device, and what a fade-and-scale (fine on
+   the desktop card) would read as sluggish next to. `sm:` swaps in that
+   fade-and-scale once the layout itself becomes the centered card. */
 .chat-dialog[open] {
-  animation: chat-dialog-in 320ms var(--ease-out-soft);
+  animation: chat-sheet-in 360ms var(--ease-out-soft);
+}
+
+@media (width >= 40rem) {
+  .chat-dialog[open] {
+    animation: chat-dialog-in 320ms var(--ease-out-soft);
+  }
 }
 
 .chat-dialog[open]::backdrop {
   animation: chat-backdrop-in 320ms ease-out;
+}
+
+@keyframes chat-sheet-in {
+  from {
+    translate: 0 100%;
+  }
 }
 
 @keyframes chat-dialog-in {
